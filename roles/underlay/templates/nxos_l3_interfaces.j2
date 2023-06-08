@@ -1,0 +1,8 @@
+#jinja2:lstrip_blocks: True
+{% for layer3_interfaces in all_layer3_interfaces %}
+{% for layer3_interface in layer3_interfaces %}
+- name: {{ layer3_interface.interface }}
+  ipv4:
+    - address: {{ layer3_interface.ip_address }}/{{ layer3_interface.mask }}
+{% endfor %}
+{% endfor %}

@@ -1,0 +1,23 @@
+---
+# tasks file for roles/common
+
+- name: Configure Hostname
+  cisco.nxos.nxos_hostname:
+    config:
+      hostname: "{{ hostname }}"
+    state: merged
+
+- name: Configure NTP Server
+  cisco.nxos.nxos_ntp_global:
+    config:
+      servers:
+        - server: "{{ ntp_server }}"
+          use_vrf: management
+          prefer: true
+    state: merged
+
+- name: Enable Features
+  cisco.nxos.nxos_feature:
+    feature: "{{ item }}"
+    state: enabled
+  loop: "{{ features }}"

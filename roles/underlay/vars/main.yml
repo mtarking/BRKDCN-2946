@@ -1,0 +1,6 @@
+---
+# vars file for roles/underlay
+
+ospf_process_id: UNDERLAY
+
+ospf_area_id: 0.0.0.0

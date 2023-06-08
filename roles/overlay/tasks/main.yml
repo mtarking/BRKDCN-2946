@@ -1,0 +1,104 @@
+---
+# tasks file for roles/overlay
+
+- name: Generate VLAN-to-VNI Config Payload
+  ansible.builtin.set_fact:
+    nxos_vlans: "{{ lookup('template', 'nxos_vlans.j2') }}"
+
+- name: Configure VLAN-to-VNI Mappings
+  cisco.nxos.nxos_vlans:
+    config: "{{ nxos_vlans | from_yaml }}"
+    state: merged
+
+- name: Configure L3VNI VRF(s)
+  cisco.nxos.nxos_vrf:
+    vrf: "{{ item.vrf_name }}"
+    vni: "{{ item.vni_id }}"
+    rd: auto
+    state: present
+  loop: "{{ vrfs }}"
+
+- name: Configure L3VNI VRF(s) Address-Family
+  cisco.nxos.nxos_vrf_af:
+    vrf: "{{ item.vrf_name }}"
+    afi: ipv4
+    route_target_both_auto_evpn: true
+    state: present
+  loop: "{{ vrfs }}"
+
+- name: Configure Anycast Gateway MAC Address
+  cisco.nxos.nxos_overlay_global:
+    anycast_gateway_mac: "1234.5678.9000"
+
+- name: Create & Enable VXLAN VTEP NVE Interface
+  cisco.nxos.nxos_interfaces:
+    config:
+      - name: nve1
+        enabled: true
+    state: merged
+
+- name: Configure VXLAN VTEP NVE Interface
+  cisco.nxos.nxos_vxlan_vtep:
+    interface: nve1
+    host_reachability: true
+    source_interface: Loopback1
+    shutdown: false
+    state: present
+
+- name: Configure VXLAN VTEP NVE Interface L3VNI Mapping(s)
+  cisco.nxos.nxos_vxlan_vtep_vni:
+    interface: nve1
+    vni: "{{ item.vni_id }}"
+    assoc_vrf: true
+    state: present
+  loop: "{{ vrfs }}"
+
+- name: Configure VXLAN VTEP NVE Interface L2VNI Mapping(s)
+  cisco.nxos.nxos_vxlan_vtep_vni:
+    interface: nve1
+    vni: "{{ item.vni_id }}"
+    multicast_group: "{{ item.mcast_grp }}"
+    state: present
+  loop: "{{ networks }}"
+
+- name: Configure L2VNI Under EVPN
+  cisco.nxos.nxos_evpn_vni:
+    vni: "{{ item.vni_id }}"
+    route_distinguisher: auto
+    route_target_both: auto
+    state: present
+  loop: "{{ networks }}"
+
+- name: Generate L3VNI & L2VNI Anycast SVI(s) Config Payload
+  ansible.builtin.set_fact:
+    nxos_anycast_svis: "{{ lookup('template', 'nxos_interfaces.j2') }}"
+
+- name: Configure L3VNI & L2VNI Anycast SVI(s)
+  cisco.nxos.nxos_interfaces:
+    config: "{{ nxos_anycast_svis | from_yaml }}"
+    state: merged
+
+- name: Configure Anycast SVI(s) VRF Association
+  cisco.nxos.nxos_vrf_interface:
+    interface: "vlan{{ item.vlan_id }}"
+    vrf: "{{ item.vrf_name }}"
+    state: present
+  loop: "{{ vrfs + networks }}"
+
+- name: Generate L3VNI & L2VNI Anycast SVI(s) Operating Config Payload
+  ansible.builtin.set_fact:
+    nxos_anycast_svis: "{{ lookup('template', 'nxos_anycast_svis.j2') }}"
+
+- name: Enable Anycast GW SVI(s)
+  cisco.nxos.nxos_interfaces:
+    config: "{{ nxos_anycast_svis | from_yaml }}"
+    state: merged
+
+- name: Generate L2VNI Anycast Host-Facing SVI(s) IP Address Config Payload
+  ansible.builtin.set_fact:
+    nxos_anycast_svis_l3: "{{ lookup('template', 'nxos_anycast_svis_l3.j2') }}"
+
+- name: Configure L2VNI Anycast Host-Facing SVI(s) IP Address
+  cisco.nxos.nxos_l3_interfaces:
+    config: "{{ nxos_anycast_svis_l3 | from_yaml }}"
+    state: merged

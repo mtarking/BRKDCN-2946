@@ -1,0 +1,12 @@
+#jinja2:lstrip_blocks: True
+{% for layer3_interfaces in all_layer3_interfaces %}
+{% for layer3_interface in layer3_interfaces %}
+- name: {{ layer3_interface['interface'] }}
+  description: {{ layer3_interface['description'] }}
+  {% if 'ethernet' in layer3_interface['interface'] %}
+  mode: layer3
+  mtu: {{ layer3_interface['mtu'] }}
+  {% endif %}
+  enabled: true
+{% endfor %}
+{% endfor %}

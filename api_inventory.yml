@@ -1,0 +1,19 @@
+all:
+  vars:
+    ansible_connection: ansible.netcommon.httpapi
+    ansible_httpapi_port: 443
+    ansible_httpapi_use_ssl: yes
+    ansible_httpapi_validate_certs: no
+    ansible_user: admin
+    ansible_httpapi_pass: cisco.123
+    ansible_network_os: cisco.nxos.nxos
+  children:
+    spines:
+      hosts:
+        10.15.1.11:
+        10.15.1.12:
+    leafs:
+      hosts:
+        10.15.1.13:
+        10.15.1.14:
+        10.15.1.15:

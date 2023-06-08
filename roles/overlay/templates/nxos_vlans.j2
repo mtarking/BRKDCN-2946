@@ -1,0 +1,11 @@
+#jinja2: lstrip_blocks: "True", trim_blocks: "True"
+{% for vrf in vrfs %}
+- name: {{ vrf.vrf_name }}
+  vlan_id: {{ vrf.vlan_id }}
+  mapped_vni: {{ vrf.vni_id }}
+{% endfor %}
+{% for network in networks %}
+- name: {{ network.vlan_name }}
+  vlan_id: {{ network.vlan_id }}
+  mapped_vni: {{ network.vni_id }}
+{% endfor %}
