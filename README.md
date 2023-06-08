@@ -2,7 +2,7 @@
 
 This repo contains the reference playbook with the VXLAN EVPN use case for BRKDCN-2946 at Cisco Live.
 
-![1](./assets/brkdcn-2964-vxlan-evpn-topology.png)
+![1](./assets/brkdcn-2946-vxlan-evpn-topology.png)
 
 ## Cloning Repo
 
