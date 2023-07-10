@@ -39,8 +39,8 @@
 - name: Configure PIM Anycast RP
   cisco.nxos.nxos_config:
     lines:
-      - "ip pim anycast-rp {{ hostvars[groups['spines'][0]].loopback_interfaces[1].ip_address }} {{ hostvars[groups['spines'][0]].loopback_interfaces[0].ip_address }}"
       - "ip pim anycast-rp {{ hostvars[groups['spines'][1]].loopback_interfaces[1].ip_address }} {{ hostvars[groups['spines'][1]].loopback_interfaces[0].ip_address }}"
+      - "ip pim anycast-rp {{ hostvars[groups['spines'][2]].loopback_interfaces[1].ip_address }} {{ hostvars[groups['spines'][2]].loopback_interfaces[0].ip_address }}"
     save_when: modified
   when: inventory_hostname in groups['spines'] 
 
@@ -52,7 +52,7 @@
   loop: "{{ all_layer3_interfaces | flatten(1) }}"
 
 - cisco.nxos.nxos_pim_rp_address:
-    rp_address: "{{ hostvars[groups['spines'][0]].loopback_interfaces[1].ip_address }}"
+    rp_address: "{{ hostvars[groups['spines'][1]].loopback_interfaces[1].ip_address }}"
     state: present
 
 - name: Enable NV Overlay EVPN

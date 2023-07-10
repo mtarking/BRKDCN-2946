@@ -20,3 +20,18 @@ bgp_neighbors:
   - neighbor: 10.0.0.103
     remote_as: 65001
     update_source: Loopback0
+  - neighbor: 10.0.0.104
+    remote_as: 65001
+    update_source: Loopback0
+  - neighbor: 10.0.0.105
+    remote_as: 65001
+    update_source: Loopback0
+  - neighbor: 10.0.0.106
+    remote_as: 65001
+    update_source: Loopback0
+  - neighbor: 10.0.0.107
+    remote_as: 65001
+    update_source: Loopback0
+  - neighbor: 10.0.0.108
+    remote_as: 65001
+    update_source: Loopback0

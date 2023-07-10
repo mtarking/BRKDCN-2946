@@ -5,18 +5,43 @@ hostname: S2
 
 layer3_physical_interfaces: &l3
     - interface: ethernet1/1
-      description: To L1 Eth1/12
+      description: To L1 Eth1/2
       ip_address: 10.2.2.0
       mask: 31
       mtu: 9216
     - interface: ethernet1/2
-      description: To L2 Eth1/12
+      description: To L2 Eth1/2
       ip_address: 10.2.2.2
       mask: 31
       mtu: 9216
     - interface: ethernet1/3
-      description: To L3 Eth1/12
+      description: To L3 Eth1/2
       ip_address: 10.2.2.4
+      mask: 31
+      mtu: 9216
+    - interface: ethernet1/4
+      description: To L4 Eth1/2
+      ip_address: 10.2.2.6
+      mask: 31
+      mtu: 9216
+    - interface: ethernet1/5
+      description: To L5 Eth1/2
+      ip_address: 10.2.2.8
+      mask: 31
+      mtu: 9216
+    - interface: ethernet1/6
+      description: To L6 Eth1/2
+      ip_address: 10.2.2.10
+      mask: 31
+      mtu: 9216
+    - interface: ethernet1/7
+      description: To L7 Eth1/2
+      ip_address: 10.2.2.12
+      mask: 31
+      mtu: 9216
+    - interface: ethernet1/8
+      description: To L8 Eth1/2
+      ip_address: 10.2.2.14
       mask: 31
       mtu: 9216
 

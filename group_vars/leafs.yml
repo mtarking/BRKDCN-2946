@@ -20,14 +20,20 @@ bgp_neighbors:
   - neighbor: 10.0.0.2
     remote_as: 65001
     update_source: Loopback0
+  - neighbor: 10.0.0.3
+    remote_as: 65001
+    update_source: Loopback0
+  - neighbor: 10.0.0.4
+    remote_as: 65001
+    update_source: Loopback0
 
 vrfs:
   - vrf_name: &refvrf_ansiblevrf AnsibleVRF
     vlan_id: 500
     vni_id: 50000
-  - vrf_name: &refvrf_demovrf DemoVRF
-    vlan_id: 600
-    vni_id: 60000
+  # - vrf_name: &refvrf_demovrf DemoVRF
+  #   vlan_id: 600
+  #   vni_id: 60000
 
 networks:
   - vrf_name: *refvrf_ansiblevrf
@@ -44,17 +50,17 @@ networks:
     addr: 192.168.102.1
     mask: 24
     mcast_grp: 239.1.1.2
-  - vrf_name: *refvrf_demovrf
-    vlan_name: DemoNet1
-    vlan_id: 201
-    vni_id: 20101
-    addr: 192.168.103.1
-    mask: 24
-    mcast_grp: 239.1.1.1
-  - vrf_name: *refvrf_demovrf
-    vlan_name: DemoNet2
-    vlan_id: 202
-    vni_id: 20102
-    addr: 192.168.104.1
-    mask: 24
-    mcast_grp: 239.1.1.2
+  # - vrf_name: *refvrf_demovrf
+  #   vlan_name: DemoNet1
+  #   vlan_id: 201
+  #   vni_id: 20101
+  #   addr: 192.168.103.1
+  #   mask: 24
+  #   mcast_grp: 239.1.1.1
+  # - vrf_name: *refvrf_demovrf
+  #   vlan_name: DemoNet2
+  #   vlan_id: 202
+  #   vni_id: 20102
+  #   addr: 192.168.104.1
+  #   mask: 24
+  #   mcast_grp: 239.1.1.2

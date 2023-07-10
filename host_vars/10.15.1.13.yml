@@ -1,45 +1,59 @@
 ---
-# vars file for L1
+# vars file for S3
 
-hostname: L1
+hostname: S3
 
 layer3_physical_interfaces: &l3
-  - interface: ethernet1/11
-    description: To S1 Eth1/1
-    mode: layer3
-    ip_address: 10.1.1.1
-    mask: 31
-    mtu: 9216
-  - interface: ethernet1/12
-    description: To S2 Eth1/1
-    mode: layer3
-    ip_address: 10.2.2.1
-    mask: 31
-    mtu: 9216
-
-layer2_physical_interfaces: &l2
     - interface: ethernet1/1
-      description: To Server1
+      description: To L1 Eth1/3
+      ip_address: 10.3.3.0
+      mask: 31
       mtu: 9216
     - interface: ethernet1/2
-      description: To Server2
+      description: To L2 Eth1/3
+      ip_address: 10.3.3.2
+      mask: 31
+      mtu: 9216
+    - interface: ethernet1/3
+      description: To L3 Eth1/3
+      ip_address: 10.3.3.4
+      mask: 31
+      mtu: 9216
+    - interface: ethernet1/4
+      description: To L4 Eth1/3
+      ip_address: 10.3.3.6
+      mask: 31
+      mtu: 9216
+    - interface: ethernet1/5
+      description: To L5 Eth1/3
+      ip_address: 10.3.3.8
+      mask: 31
+      mtu: 9216
+    - interface: ethernet1/6
+      description: To L6 Eth1/3
+      ip_address: 10.3.3.10
+      mask: 31
+      mtu: 9216
+    - interface: ethernet1/7
+      description: To L7 Eth1/3
+      ip_address: 10.3.3.12
+      mask: 31
       mtu: 9216
     - interface: ethernet1/8
-      description: To L2 Eth1/8
-      mtu: 9216
-    - interface: ethernet1/9
-      description: To L2 Eth1/9
+      description: To L8 Eth1/3
+      ip_address: 10.3.3.14
+      mask: 31
       mtu: 9216
 
 loopback_interfaces: &lo
-  - interface: loopback0
-    description: Routing Loopback
-    ip_address: 10.0.0.101
-    mask: 32
-  - interface: loopback1
-    description: VTEP Loopback
-    ip_address: 10.100.100.101
-    mask: 32
+    - interface: loopback0 
+      description: Routing Loopback
+      ip_address: 10.0.0.3
+      mask: 32
+    - interface: loopback250
+      description: PIM Anycast RP Loopback
+      ip_address: 10.10.10.250
+      mask: 32
 
 all_layer3_interfaces:
     - *l3

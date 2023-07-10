@@ -5,18 +5,43 @@ hostname: S1
 
 layer3_physical_interfaces: &l3
     - interface: ethernet1/1
-      description: To L1 Eth1/11
+      description: To L1 Eth1/1
       ip_address: 10.1.1.0
       mask: 31
       mtu: 9216
     - interface: ethernet1/2
-      description: To L2 Eth1/11
+      description: To L2 Eth1/1
       ip_address: 10.1.1.2
       mask: 31
       mtu: 9216
     - interface: ethernet1/3
-      description: To L3 Eth1/11
+      description: To L3 Eth1/1
       ip_address: 10.1.1.4
+      mask: 31
+      mtu: 9216
+    - interface: ethernet1/4
+      description: To L4 Eth1/1
+      ip_address: 10.1.1.6
+      mask: 31
+      mtu: 9216
+    - interface: ethernet1/5
+      description: To L5 Eth1/1
+      ip_address: 10.1.1.8
+      mask: 31
+      mtu: 9216
+    - interface: ethernet1/6
+      description: To L6 Eth1/1
+      ip_address: 10.1.1.10
+      mask: 31
+      mtu: 9216
+    - interface: ethernet1/7
+      description: To L7 Eth1/1
+      ip_address: 10.1.1.12
+      mask: 31
+      mtu: 9216
+    - interface: ethernet1/8
+      description: To L8 Eth1/1
+      ip_address: 10.1.1.14
       mask: 31
       mtu: 9216
 
@@ -25,10 +50,10 @@ loopback_interfaces: &lo
       description: Routing Loopback
       ip_address: 10.0.0.1
       mask: 32
-    - interface: loopback250
-      description: PIM Anycast RP Loopback
-      ip_address: 10.10.10.250
-      mask: 32
+    # - interface: loopback250
+    #   description: PIM Anycast RP Loopback
+    #   ip_address: 10.10.10.250
+    #   mask: 32
 
 all_layer3_interfaces:
     - *l3
