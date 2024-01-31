@@ -1,0 +1,17 @@
+
+---
+# Connection Information For Staging Fabric
+#
+# This file defines how Ansible will connect to the NDFC controller
+ndfc:
+  children:
+    stage:
+      hosts:
+        10.15.0.38:
+          ansible_connection: ansible.netcommon.httpapi
+          ansible_httpapi_use_ssl: true
+          ansible_httpapi_validate_certs: false
+          ansible_python_interpreter: auto_silent
+          ansible_network_os: cisco.dcnm.dcnm
+          ansible_user: admin
+          ansible_password: cisco.123

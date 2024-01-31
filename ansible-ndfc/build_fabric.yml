@@ -1,0 +1,14 @@
+---
+# This is the top level build playbook that runs the various
+# Ansible roles that will be used to build out the fabric
+
+- name: Build VXLAN EVPN Fabric on NDFC
+  hosts: ndfc
+  gather_facts: false
+
+  roles:
+    - create_fabric
+    - add_inventory
+    - setup_vpc
+    - manage_interfaces
+    - add_overlay

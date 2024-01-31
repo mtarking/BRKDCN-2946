@@ -1,0 +1,21 @@
+---
+- name: Create Loopback Interface On External Router
+  cisco.dcnm.dcnm_interface:
+    check_deploy: True
+    fabric: "{{ fabric_external.name }}"
+    state: merged
+    config:
+      - name: "lo0"
+        type: lo
+        switch:
+          - "{{ fabric_external.edge_router[0].ip }}"
+        deploy: true
+        profile:
+          admin_state: true
+          mode: lo
+          int_vrf: "AnsibleVRF"
+          ipv4_addr: 172.16.1.1
+          route_tag: "12345"
+          cmds:
+            - no shutdown
+          description: "Ping Test Loopback"

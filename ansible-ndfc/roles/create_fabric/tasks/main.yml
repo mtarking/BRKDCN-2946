@@ -1,0 +1,37 @@
+---
+# tasks file for roles/create_fabric
+
+- name: Role Entry Point - [create_fabric]
+  ansible.builtin.debug:
+    msg:
+      - "----------------------------------------------------------------"
+      - "+             Calling Role - [create_fabric]                   +"
+      - "----------------------------------------------------------------"
+  tags:
+    - cf_local
+    - cf_external
+    - cf_poap
+    - cf_all
+
+- name: Get Fabric List
+  cisco.dcnm.dcnm_rest:
+    method: GET
+    path: "/appcenter/cisco/ndfc/api/v1/lan-fabric/rest/control/fabrics"
+  register: create_fabric_result
+  tags:
+    - cf_local
+    - cf_external
+    - cf_poap
+    - cf_all
+
+- name: Include Tasks To Create Local Fabric
+  ansible.builtin.import_tasks: local_fabric.yml
+  tags:
+    - cf_local
+    - cf_all
+
+- name: Include Tasks To Create External Fabric
+  ansible.builtin.import_tasks: external_fabric.yml
+  tags:
+    - cf_external
+    - cf_all

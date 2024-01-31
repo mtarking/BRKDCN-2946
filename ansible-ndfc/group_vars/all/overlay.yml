@@ -1,0 +1,23 @@
+---
+vrfs:
+  - vrf_name: &refvrf_ansible AnsibleVRF
+    vrf_id: 150001
+    vlan_id: 2000
+    attach: []
+    attach_group: all_leaf
+networks:
+  - net_name: AnsibleNet1
+    vrf_name: *refvrf_ansible
+    net_id: 130001
+    vlan_id: 2301
+    vlan_name: AnsibleNet1_vlan2301
+    gw_ip_subnet: "192.168.11.1/24"
+    attach: []
+    attach_group: esxi
+  - net_name: AnsibleNet2
+    vrf_name: *refvrf_ansible
+    net_id: 130002
+    vlan_id: 2302
+    vlan_name: AnsibleNet2_vlan2302
+    gw_ip_subnet: "192.168.12.1/24"
+    attach_group: esxi

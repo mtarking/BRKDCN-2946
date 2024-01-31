@@ -1,0 +1,75 @@
+---
+interface:
+  # --------------------
+  # VCP Interface List
+  # --------------------
+  vpc:
+    - name: vpc10
+      type: vpc
+      switch:
+        - 10.15.10.12
+        - 10.15.10.13
+      profile:
+        admin_state: true
+        mode: trunk
+        peer1_members:
+          - e1/5
+        peer2_members:
+          - e1/5
+        pc_mode: 'active'
+        bpdu_guard: true
+        port_type_fast: true
+        mtu: jumbo
+    - name: vpc20
+      type: vpc
+      switch:
+        - 10.15.10.12
+        - 10.15.10.13
+      profile:
+        admin_state: true
+        mode: trunk
+        peer1_members:
+          - e1/6
+        peer2_members:
+          - e1/6
+        pc_mode: 'active'
+        bpdu_guard: true
+        port_type_fast: true
+        mtu: jumbo
+  # ----------------------
+  # Access Interface List
+  # ----------------------
+  access:
+    - name: "eth1/1"
+      type: eth
+      switch:
+        - 10.15.10.12
+      deploy: true
+      profile:
+        admin_state: true
+        mode: access
+        speed: 'Auto'
+        bpdu_guard: false
+        port_type_fast: true
+        mtu: jumbo
+        access_vlan: 2301
+        cmds:
+          - no shutdown
+        description: "VLAN 2301 Access Interface"
+    - name: "eth1/1"
+      type: eth
+      switch:
+        - 10.15.10.13
+      deploy: true
+      profile:
+        admin_state: true
+        mode: access
+        speed: 'Auto'
+        bpdu_guard: false
+        port_type_fast: true
+        mtu: jumbo
+        access_vlan: 2302
+        cmds:
+          - no shutdown
+        description: "VLAN 2302 Access Interface"
+

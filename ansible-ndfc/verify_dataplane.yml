@@ -1,0 +1,23 @@
+---
+
+- name: Verify DataPlane Connectivity
+  hosts: nxos
+  gather_facts: false
+
+  tasks:
+    - name: Verify Connectivity To External Fabric From Leaf1
+      cisco.nxos.nxos_command:
+        commands:
+          - ping nve 172.16.1.1 vrf AnsibleVRF source 192.168.11.1
+      register: ping_result
+
+    - name: Display Result
+      ansible.builtin.debug:
+        msg: "{{ ping_result.stdout_lines[0] }}"
+
+    - name: Check Ping Result
+      assert:
+        that:
+          - '"Success rate is 100 percent" in ping_result.stdout[0]'
+        success_msg: "Passed: External Fabric DataPlane Test Succeeded"
+        fail_msg: "Failed: External Fabric DataPlane Test Failed!"
