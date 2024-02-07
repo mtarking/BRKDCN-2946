@@ -1,4 +1,5 @@
-# BRKDCN-2946 Infra-as-Code with Ansible for NXOS & NDFC
+# BRKDCN-2946:
+# Infra-as-Code for NXOS & NDFC with Ansible
 
 This repo contains the reference playbook with the VXLAN EVPN use case for BRKDCN-2946 at Cisco Live.
 
