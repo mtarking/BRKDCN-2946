@@ -1,0 +1,10 @@
+---
+# tasks file for roles/vlan_jinja_rendered
+
+- name: Generate VLAN-to-VNI Config Payload
+  ansible.builtin.set_fact:
+    nxos_vlans: "{{ lookup('template', 'nxos_vlans.j2') }}"
+
+- name: Configure VLAN-to-VNI Mappings
+  cisco.nxos.nxos_vlans:
+    config: "{{ nxos_vlans | from_yaml }}"

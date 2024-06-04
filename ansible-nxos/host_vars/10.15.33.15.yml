@@ -4,13 +4,13 @@
 hostname: L3
 
 layer3_physical_interfaces: &l3
-  - interface: ethernet1/11
+  - interface: ethernet1/1
     description: To S1 Eth1/3
     mode: layer3
     ip_address: 10.1.1.5
     mask: 31
     mtu: 9216
-  - interface: ethernet1/12
+  - interface: ethernet1/2
     description: To S2 Eth1/3
     mode: layer3
     ip_address: 10.2.2.5
@@ -18,10 +18,10 @@ layer3_physical_interfaces: &l3
     mtu: 9216
 
 layer2_physical_interfaces: &l2
-    - interface: ethernet1/1
+    - interface: ethernet1/11
       description: To Server1
       mtu: 9216
-    - interface: ethernet1/2
+    - interface: ethernet1/12
       description: To Server2
       mtu: 9216
 

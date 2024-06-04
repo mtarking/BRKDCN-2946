@@ -1,0 +1,10 @@
+---
+# tasks file for roles/vlan_loop
+
+- name: Configure VLAN-to-VNI Mappings
+  cisco.nxos.nxos_vlans:
+    config:
+      - name: "{{ item.vlan_name }}"
+        vlan_id: "{{ item.vlan_id }}"
+        mapped_vni: "{{ item.vni_id }}"
+  loop: "{{ networks }}"

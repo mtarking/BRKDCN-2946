@@ -1,6 +1,6 @@
 ansible==7.5.0
 ansible-core==2.14.5
-ansible-pylibssh==1.1.0
+# ansible-pylibssh==1.1.0
 bcrypt==4.0.1
 cffi==1.15.1
 cryptography==40.0.2

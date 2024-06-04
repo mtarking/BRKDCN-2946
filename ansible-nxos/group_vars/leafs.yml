@@ -29,6 +29,83 @@ vrfs:
     vlan_id: 600
     vni_id: 60000
 
+# vlans:
+#   - vlan_id: 101
+#     vni_id: 10101
+#     vlan_name: AnsibleNet1
+#   - vlan_id: 102
+#     vni_id: 10102
+#     vlan_name: AnsibleNet2
+#   - vlan_id: 103
+#     vni_id: 10103
+#     vlan_name: AnsibleNet3
+#   - vlan_id: 104
+#     vni_id: 10104
+#     vlan_name: AnsibleNet4
+#   - vlan_id: 105
+#     vni_id: 10105
+#     vlan_name: AnsibleNet5
+#   - vlan_id: 106
+#     vni_id: 10106
+#     vlan_name: AnsibleNet6
+#   - vlan_id: 107
+#     vni_id: 10107
+#     vlan_name: AnsibleNet7
+#   - vlan_id: 108
+#     vni_id: 10108
+#     vlan_name: AnsibleNet8
+#   - vlan_id: 109
+#     vni_id: 10109
+#     vlan_name: AnsibleNet9
+#   - vlan_id: 110
+#     vni_id: 10110
+#     vlan_name: AnsibleNet10
+#   - vlan_id: 111
+#     vni_id: 10111
+#     vlan_name: AnsibleNet11
+#   - vlan_id: 112
+#     vni_id: 10112
+#     vlan_name: AnsibleNet12
+#   - vlan_id: 113
+#     vni_id: 10113
+#     vlan_name: AnsibleNet13
+#   - vlan_id: 114
+#     vni_id: 10114
+#     vlan_name: AnsibleNet14
+#   - vlan_id: 115
+#     vni_id: 10115
+#     vlan_name: AnsibleNet15
+#   - vlan_id: 116
+#     vni_id: 10116
+#     vlan_name: AnsibleNet16
+#   - vlan_id: 117
+#     vni_id: 10117
+#     vlan_name: AnsibleNet17
+#   - vlan_id: 118
+#     vni_id: 10118
+#     vlan_name: AnsibleNet18
+#   - vlan_id: 119
+#     vni_id: 10119
+#     vlan_name: AnsibleNet19
+#   - vlan_id: 120
+#     vni_id: 10120
+#     vlan_name: AnsibleNet20
+#   - vlan_id: 121
+#     vni_id: 10121
+#     vlan_name: AnsibleNet21
+#   - vlan_id: 122
+#     vni_id: 10122
+#     vlan_name: AnsibleNet22
+#   - vlan_id: 123
+#     vni_id: 10123
+#     vlan_name: AnsibleNet23
+#   - vlan_id: 124
+#     vni_id: 10124
+#     vlan_name: AnsibleNet24
+#   - vlan_id: 125
+#     vni_id: 10125
+#     vlan_name: AnsibleNet25
+
 networks:
   - vrf_name: *refvrf_ansiblevrf
     vlan_name: AnsibleNet1
@@ -45,16 +122,163 @@ networks:
     mask: 24
     mcast_grp: 239.1.1.2
   - vrf_name: *refvrf_demovrf
-    vlan_name: DemoNet1
-    vlan_id: 201
-    vni_id: 20101
+    vlan_name: AnsibleNet3
+    vlan_id: 103
+    vni_id: 10103
     addr: 192.168.103.1
     mask: 24
-    mcast_grp: 239.1.1.1
+    mcast_grp: 239.1.1.3
   - vrf_name: *refvrf_demovrf
-    vlan_name: DemoNet2
-    vlan_id: 202
-    vni_id: 20102
+    vlan_name: AnsibleNet4
+    vlan_id: 104
+    vni_id: 10104
     addr: 192.168.104.1
     mask: 24
-    mcast_grp: 239.1.1.2
+    mcast_grp: 239.1.1.4
+  - vrf_name: *refvrf_ansiblevrf
+    vlan_name: AnsibleNet5
+    vlan_id: 105
+    vni_id: 10105
+    addr: 192.168.105.1
+    mask: 24
+    mcast_grp: 239.1.1.5
+  - vrf_name: *refvrf_ansiblevrf
+    vlan_name: AnsibleNet6
+    vlan_id: 106
+    vni_id: 10106
+    addr: 192.168.106.1
+    mask: 24
+    mcast_grp: 239.1.1.6
+  - vrf_name: *refvrf_ansiblevrf
+    vlan_name: AnsibleNet7
+    vlan_id: 107
+    vni_id: 10107
+    addr: 192.168.107.1
+    mask: 24
+    mcast_grp: 239.1.1.7
+  - vrf_name: *refvrf_ansiblevrf
+    vlan_name: AnsibleNet8
+    vlan_id: 108
+    vni_id: 10108
+    addr: 192.168.108.1
+    mask: 24
+    mcast_grp: 239.1.1.8
+  - vrf_name: *refvrf_ansiblevrf
+    vlan_name: AnsibleNet9
+    vlan_id: 109
+    vni_id: 10109
+    addr: 192.168.109.1
+    mask: 24
+    mcast_grp: 239.1.1.9
+  - vrf_name: *refvrf_ansiblevrf
+    vlan_name: AnsibleNet10
+    vlan_id: 110
+    vni_id: 10110
+    addr: 192.168.110.1
+    mask: 24
+    mcast_grp: 239.1.1.10
+  - vrf_name: *refvrf_ansiblevrf
+    vlan_name: AnsibleNet11
+    vlan_id: 111
+    vni_id: 10111
+    addr: 192.168.111.1
+    mask: 24
+    mcast_grp: 239.1.1.11
+  - vrf_name: *refvrf_ansiblevrf
+    vlan_name: AnsibleNet12
+    vlan_id: 112
+    vni_id: 10112
+    addr: 192.168.112.1
+    mask: 24
+    mcast_grp: 239.1.1.12
+  - vrf_name: *refvrf_ansiblevrf
+    vlan_name: AnsibleNet13
+    vlan_id: 113
+    vni_id: 10113
+    addr: 192.168.113.1
+    mask: 24
+    mcast_grp: 239.1.1.13
+  - vrf_name: *refvrf_ansiblevrf
+    vlan_name: AnsibleNet14
+    vlan_id: 114
+    vni_id: 10114
+    addr: 192.168.114.1
+    mask: 24
+    mcast_grp: 239.1.1.14
+  - vrf_name: *refvrf_ansiblevrf
+    vlan_name: AnsibleNet15
+    vlan_id: 115
+    vni_id: 10115
+    addr: 192.168.115.1
+    mask: 24
+    mcast_grp: 239.1.1.15
+  - vrf_name: *refvrf_ansiblevrf
+    vlan_name: AnsibleNet16
+    vlan_id: 116
+    vni_id: 10116
+    addr: 192.168.116.1
+    mask: 24
+    mcast_grp: 239.1.1.16
+  - vrf_name: *refvrf_ansiblevrf
+    vlan_name: AnsibleNet17
+    vlan_id: 117
+    vni_id: 10117
+    addr: 192.168.117.1
+    mask: 24
+    mcast_grp: 239.1.1.17
+  - vrf_name: *refvrf_ansiblevrf
+    vlan_name: AnsibleNet18
+    vlan_id: 118
+    vni_id: 10118
+    addr: 192.168.118.1
+    mask: 24
+    mcast_grp: 239.1.1.18
+  - vrf_name: *refvrf_ansiblevrf
+    vlan_name: AnsibleNet19
+    vlan_id: 119
+    vni_id: 10119
+    addr: 192.168.119.1
+    mask: 24
+    mcast_grp: 239.1.1.19
+  - vrf_name: *refvrf_ansiblevrf
+    vlan_name: AnsibleNet20
+    vlan_id: 120
+    vni_id: 10120
+    addr: 192.168.120.1
+    mask: 24
+    mcast_grp: 239.1.1.20
+  - vrf_name: *refvrf_ansiblevrf
+    vlan_name: AnsibleNet21
+    vlan_id: 121
+    vni_id: 10121
+    addr: 192.168.121.1
+    mask: 24
+    mcast_grp: 239.1.1.21
+  - vrf_name: *refvrf_ansiblevrf
+    vlan_name: AnsibleNet22
+    vlan_id: 122
+    vni_id: 10122
+    addr: 192.168.122.1
+    mask: 24
+    mcast_grp: 239.1.1.22
+  - vrf_name: *refvrf_ansiblevrf
+    vlan_name: AnsibleNet23
+    vlan_id: 123
+    vni_id: 10123
+    addr: 192.168.123.1
+    mask: 24
+    mcast_grp: 239.1.1.23
+  - vrf_name: *refvrf_ansiblevrf
+    vlan_name: AnsibleNet24
+    vlan_id: 124
+    vni_id: 10124
+    addr: 192.168.124.1
+    mask: 24
+    mcast_grp: 239.1.1.24
+  - vrf_name: *refvrf_ansiblevrf
+    vlan_name: AnsibleNet25
+    vlan_id: 125
+    vni_id: 10125
+    addr: 192.168.125.1
+    mask: 24
+    mcast_grp: 239.1.1.25

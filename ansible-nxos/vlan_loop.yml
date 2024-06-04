@@ -1,0 +1,8 @@
+---
+# main playbook
+
+- hosts: 10.15.33.13
+  gather_facts: false
+
+  roles:
+    - role: vlan_loop

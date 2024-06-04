@@ -1,0 +1,8 @@
+---
+# main playbook
+
+- hosts: 10.15.33.14
+  gather_facts: false
+
+  roles:
+    - role: vlan_jinja_rendered
