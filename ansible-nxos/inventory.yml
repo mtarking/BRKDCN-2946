@@ -4,7 +4,6 @@ all:
     ansible_user: admin
     ansible_password: cisco.123
     ansible_network_os: cisco.nxos.nxos
-    ntp_server: 10.81.254.131
   children:
     spines:
       hosts:
