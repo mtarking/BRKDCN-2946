@@ -1,0 +1,5 @@
+
+command time -p  ansible-playbook -i inventory.yml vlan_loop.yml
+
+command time -p  ansible-playbook -i inventory.yml vlan_jinja_render.yml
+
