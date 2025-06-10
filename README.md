@@ -14,18 +14,19 @@ git clone https://github.com/mtarking/BRKDCN-2946.git
 ```bash
 cd BRKDCN-2946
 pip install -r requirements.txt
+ansible-galaxy collection install -r requirements.yml
 ```
 
 ## Executing Ansible Playbook
 
 ```bash
-ansible-playbook -i ansible-nxos/inventory.yml ansible-nxos/vxlan.yml
+ansible-playbook -i nxos/inventory.yml nxos/vxlan.yml
 ```
 
 or
 
 ```bash
-ansible-playbook -i ansible-ndfc/hosts.stage.yml ansible-ndfc/build_fabric.yml
+ansible-playbook -i nd/inventory.yml nd/vxlan.yml
 ```
 
 

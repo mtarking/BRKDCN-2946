@@ -1,0 +1,20 @@
+---
+# This file is auto-generated
+# DO NOT EDIT MANUALLY
+#
+{% for vrf in vrfs %}
+- vrf_name: {{ vrf['vrf_name'] }}
+{# ------------------------------------------------------ #}
+{# Properties Section #}
+{# ------------------------------------------------------ #}
+  vrf_id: {{ vrf['vrf_id']  }}
+  vlan_id: {{ vrf['vlan_id'] }}
+{# ------------------------------------------------------ #}
+{# Attach Group Section #}
+{# ------------------------------------------------------ #}
+  attach:
+{% for switch in vrf_attach_group.all_leaf %}
+    - ip_address: {{ switch['ip_address'] }}
+{% endfor %}
+  deploy: false
+{% endfor %}

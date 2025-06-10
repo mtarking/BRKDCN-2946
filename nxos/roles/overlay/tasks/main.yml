@@ -1,0 +1,199 @@
+---
+# tasks file for roles/overlay
+
+- name: Generate VLAN-to-VNI Config Payload
+  ansible.builtin.set_fact:
+    nxos_vlans: "{{ lookup('template', 'nxos_vlans.j2') }}"
+
+- name: Configure VLAN-to-VNI Mappings
+  cisco.nxos.nxos_vlans:
+    config: "{{ nxos_vlans | from_yaml }}"
+    state: overridden
+
+- name: Manage VRFs
+  block:
+    - name: Configure L3VNI VRF(s)
+      cisco.nxos.nxos_vrf:
+        vrf: "{{ item.vrf_name }}"
+        vni: "{{ item.vni_id }}"
+        rd: auto
+        state: present
+      loop: "{{ vrfs }}"
+
+    - name: Configure L3VNI VRF(s) Address-Family
+      cisco.nxos.nxos_vrf_af:
+        vrf: "{{ item.vrf_name }}"
+        afi: ipv4
+        route_target_both_auto_evpn: true
+        state: present
+      loop: "{{ vrfs }}"
+
+    - name: Get VRFs from Switch via Native JSON
+      ansible.utils.cli_parse:
+        command: show vrf | json
+        parser:
+          name: ansible.utils.json
+        set_fact: parsed_output
+
+    - name: Default Parsed VRF List
+      ansible.builtin.set_fact:
+        parsed_vrf_list: []
+
+    - name: Parse VRF Names
+      ansible.builtin.set_fact:
+        parsed_vrf_list: "{{ parsed_output | community.general.json_query(query) | default([]) }}"
+      vars:
+        query: "TABLE_vrf.ROW_vrf[*].vrf_name"
+
+    - name: Remove Default VRFs
+      ansible.builtin.set_fact:
+        parsed_vrf_list: "{{ parsed_vrf_list | difference(default_vrfs) | default([]) }}"
+      vars:
+        default_vrfs: ['default', 'management', 'egress-loadbalance-resolution-']
+
+    - name: Default VRFs to Unconfigure List
+      ansible.builtin.set_fact:
+        vrfs_to_unconfigure: []
+
+    - name: Get All Intended VRFs
+      ansible.builtin.set_fact:
+        intent_vrfs: "{{ vrfs | map(attribute='vrf_name') | list | unique | default([]) }}"
+
+    - name: Determine Features to Unconfigure
+      ansible.builtin.set_fact:
+        vrfs_to_unconfigure: "{{ parsed_vrf_list | difference(intent_vrfs) | default([]) }}"
+
+    - name: Remove Unintended VRFs
+      cisco.nxos.nxos_vrf:
+        vrf: "{{ item }}"
+        state: absent
+      loop: "{{ vrfs_to_unconfigure }}"
+
+- name: Configure Anycast Gateway MAC Address
+  cisco.nxos.nxos_overlay_global:
+    anycast_gateway_mac: "1234.5678.9000"
+
+- name: Manage VXLAN VTEP NVE Interface
+  block:
+    - name: Create & Enable VXLAN VTEP NVE Interface
+      cisco.nxos.nxos_interfaces:
+        config:
+          - name: nve1
+            enabled: true
+        state: replaced
+
+    - name: Configure VXLAN VTEP NVE Interface
+      cisco.nxos.nxos_vxlan_vtep:
+        interface: nve1
+        host_reachability: true
+        source_interface: Loopback1
+        shutdown: false
+        state: present
+
+    - name: Configure VXLAN VTEP NVE Interface L3VNI Mapping(s)
+      cisco.nxos.nxos_vxlan_vtep_vni:
+        interface: nve1
+        vni: "{{ item.vni_id }}"
+        assoc_vrf: true
+        state: present
+      loop: "{{ vrfs }}"
+
+    - name: Configure VXLAN VTEP NVE Interface L2VNI Mapping(s)
+      cisco.nxos.nxos_vxlan_vtep_vni:
+        interface: nve1
+        vni: "{{ item.vni_id }}"
+        multicast_group: "{{ item.mcast_grp }}"
+        state: present
+      loop: "{{ networks }}"
+
+    - name: Configure L2VNI Under EVPN
+      cisco.nxos.nxos_evpn_vni:
+        vni: "{{ item.vni_id }}"
+        route_distinguisher: auto
+        route_target_both: auto
+        state: present
+      loop: "{{ networks }}"
+
+    - name: Get VNIs from Switch via Native JSON
+      ansible.utils.cli_parse:
+        command: show nve vni | json
+        parser:
+          name: ansible.utils.json
+        set_fact: parsed_output
+
+    - name: Default Parsed VRF List
+      ansible.builtin.set_fact:
+        parsed_vni_list: []
+
+    - name: Parse VRF Names
+      ansible.builtin.set_fact:
+        parsed_vni_list: "{{ parsed_output | community.general.json_query(query) | map('int') | list | default([]) }}"
+      vars:
+        query: "TABLE_nve_vni.ROW_nve_vni[*].vni"
+
+    - name: Default VNIs to Unconfigure List
+      ansible.builtin.set_fact:
+        vnis_to_unconfigure: []
+
+    - name: Get All Intended VRF VNIs
+      ansible.builtin.set_fact:
+        intent_vrfs: "{{ vrfs | map(attribute='vni_id') | list | unique | default([]) }}"
+
+    - name: Get All Intended Network VNIs
+      ansible.builtin.set_fact:
+        intent_networks: "{{ networks | map(attribute='vni_id') | list | unique | default([]) }}"
+
+    - name: Join Lists
+      ansible.builtin.set_fact:
+        intent_vnis: "{{ intent_vrfs + intent_networks | list | unique | default([]) }}"
+
+    - name: Determine VNIs to Unconfigure
+      ansible.builtin.set_fact:
+        vnis_to_unconfigure: "{{ parsed_vni_list | difference(intent_vnis) | default([]) }}"
+
+    - name: Unconfigure VXLAN VTEP NVE Interface VNI Mapping(s)
+      cisco.nxos.nxos_vxlan_vtep_vni:
+        interface: nve1
+        vni: "{{ item }}"
+        state: absent
+      loop: "{{ vnis_to_unconfigure }}"
+
+    - name: Unconfigure L2VNI Under EVPN
+      cisco.nxos.nxos_evpn_vni:
+        vni: "{{ item }}"
+        state: absent
+      loop: "{{ vnis_to_unconfigure }}"
+
+- name: Generate L3VNI & L2VNI Anycast SVI(s) Config Payload
+  ansible.builtin.set_fact:
+    nxos_anycast_svis: "{{ lookup('template', 'nxos_interfaces.j2') }}"
+
+- name: Configure L3VNI & L2VNI Anycast SVI(s)
+  cisco.nxos.nxos_interfaces:
+    config: "{{ nxos_anycast_svis | from_yaml }}"
+    state: replaced
+
+- name: Configure Anycast SVI(s) VRF Association
+  cisco.nxos.nxos_vrf_interface:
+    interface: "vlan{{ item.vlan_id }}"
+    vrf: "{{ item.vrf_name }}"
+    state: present
+  loop: "{{ vrfs + networks }}"
+
+- name: Generate L3VNI & L2VNI Anycast SVI(s) Operating Config Payload
+  ansible.builtin.set_fact:
+    nxos_anycast_svis: "{{ lookup('template', 'nxos_anycast_svis.j2') }}"
+
+- name: Enable Anycast GW SVI(s)
+  cisco.nxos.nxos_interfaces:
+    config: "{{ nxos_anycast_svis | from_yaml }}"
+    state: replaced
+
+- name: Generate L2VNI Anycast Host-Facing SVI(s) IP Address Config Payload
+  ansible.builtin.set_fact:
+    nxos_anycast_svis_l3: "{{ lookup('template', 'nxos_anycast_svis_l3.j2') }}"
+
+- name: Configure L2VNI Anycast Host-Facing SVI(s) IP Address
+  cisco.nxos.nxos_l3_interfaces:
+    config: "{{ nxos_anycast_svis_l3 | from_yaml }}"
+    state: replaced

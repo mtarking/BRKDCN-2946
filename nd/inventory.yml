@@ -1,0 +1,4 @@
+ndfc:
+  hosts:
+    BRKDCN-2946:
+      ansible_host: 10.15.0.110

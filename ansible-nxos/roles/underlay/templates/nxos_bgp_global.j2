@@ -1,9 +1,0 @@
-#jinja2:lstrip_blocks: True
-as_number: {{ bgp_asn }}
-router_id: {{ loopback_interfaces[0].ip_address }}
-neighbors:
-{% for bgp_neighbor in bgp_neighbors %}
-  - neighbor_address: {{ bgp_neighbor.neighbor }}
-    remote_as: {{ bgp_neighbor.remote_as }}
-    update_source: {{ bgp_neighbor.update_source }}
-{% endfor %}

@@ -1,0 +1,8 @@
+---
+
+fabric_settings:
+    DEPLOY: yes
+    FABRIC_NAME: BRKDCN-2946
+    FABRIC_TYPE: VXLAN_EVPN
+    BGP_AS: 65419
+    GRFIELD_DEBUG_FLAG: Enable

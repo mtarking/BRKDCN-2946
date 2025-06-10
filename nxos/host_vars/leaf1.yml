@@ -1,0 +1,50 @@
+---
+# vars file for leaf1
+
+hostname: leaf1
+
+layer3_physical_interfaces: &l3
+  - interface: mgmt0
+    ip_address: 10.15.34.13
+    mask: 24
+    mtu: 1500
+  - interface: ethernet1/1
+    description: To S1 Eth1/1
+    mode: layer3
+    ip_address: 10.1.1.1
+    mask: 31
+    mtu: 9216
+  - interface: ethernet1/2
+    description: To S2 Eth1/1
+    mode: layer3
+    ip_address: 10.2.2.1
+    mask: 31
+    mtu: 9216
+
+layer2_physical_interfaces: &l2
+    - interface: ethernet1/11
+      description: To Server1
+      mtu: 9216
+    - interface: ethernet1/12
+      description: To Server2
+      mtu: 9216
+    - interface: ethernet1/18
+      description: To L2 Eth1/8
+      mtu: 9216
+    - interface: ethernet1/19
+      description: To L2 Eth1/9
+      mtu: 9216
+
+loopback_interfaces: &lo
+  - interface: loopback0
+    description: Routing Loopback
+    ip_address: 10.0.0.101
+    mask: 32
+  - interface: loopback1
+    description: VTEP Loopback
+    ip_address: 10.100.100.101
+    mask: 32
+
+all_layer3_interfaces:
+    - *l3
+    - *lo

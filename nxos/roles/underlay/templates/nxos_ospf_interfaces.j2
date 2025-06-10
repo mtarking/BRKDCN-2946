@@ -1,0 +1,19 @@
+#jinja2:lstrip_blocks: True
+{% for layer3_interfaces in all_layer3_interfaces %}
+{% for layer3_interface in layer3_interfaces %}
+{% if layer3_interface.interface | lower != 'mgmt0' %}
+{% if 'loopback' in layer3_interface.interface | lower %}
+- name: {{ layer3_interface.interface | lower }}
+{% elif 'thernet' in layer3_interface.interface | lower %}
+- name: {{ layer3_interface.interface | title }}
+{% endif %}
+  address_family:
+    - afi: ipv4
+      network: point-to-point
+      processes:
+        - process_id: {{ ospf_process_id }}
+          area:
+            area_id: {{ ospf_area_id }}
+{% endif %}
+{% endfor %}
+{% endfor %}

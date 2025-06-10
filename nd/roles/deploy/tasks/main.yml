@@ -1,0 +1,24 @@
+---
+# tasks file for roles/deploy
+
+
+- name: Role Entry Point - [deploy]
+  ansible.builtin.debug:
+    msg:
+      - "----------------------------------------------------------------"
+      - "+             Calling Role - [deploy]                          +"
+      - "----------------------------------------------------------------"
+
+- name: Config-Save & Deploy for NDFC Fabric {{ fabric_settings.FABRIC_NAME }}
+  tags:
+    - deploy
+  block:
+    - name: Config-Save for Fabric {{ fabric_settings.FABRIC_NAME }}
+      cisco.dcnm.dcnm_rest:
+        method: POST
+        path: "/appcenter/cisco/ndfc/api/v1/lan-fabric/rest/control/fabrics/{{ fabric_settings.FABRIC_NAME }}/config-save"
+
+    - name: Deploy for Fabric {{ fabric_settings.FABRIC_NAME }}
+      cisco.dcnm.dcnm_rest:
+        path: "/appcenter/cisco/ndfc/api/v1/lan-fabric/rest/control/fabrics/{{ fabric_settings.FABRIC_NAME }}/config-deploy?forceShowRun=false"
+        method: POST

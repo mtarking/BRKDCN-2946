@@ -1,0 +1,78 @@
+---
+# tasks file for roles/overlay
+
+- name: Role Entry Point - [manage_overlay]
+  ansible.builtin.debug:
+    msg:
+      - "----------------------------------------------------------------"
+      - "+             Calling Role - [manage_overlay]                  +"
+      - "----------------------------------------------------------------"
+  tags:
+    - mo_vrfs_nets
+    - mo_vrfs
+    - mo_networks
+    - mo_all
+
+# -------------------
+# CREATE VRF SECTION
+# -------------------
+
+- name: Generate and Manage NDFC Fabric VRFs
+  tags:
+    - mo_vrfs_nets
+    - mo_vrfs
+    - mo_all
+  block:
+    # --------------------------------------------------------------------
+    # Generate VRF Configuration for NDFC
+    # --------------------------------------------------------------------
+    - name: Create file to hold rendered VRF information
+      ansible.builtin.template:
+        src: attach_vrfs.j2
+        dest: "{{ role_path }}/files/attach_vrfs.yml"
+        mode: preserve
+
+    - name: Create and store generated VRF configuration
+      ansible.builtin.set_fact:
+        vrf_config: "{{ lookup('file', 'attach_vrfs.yml') | from_yaml }}"
+
+    # --------------------------------------------------------------------
+    # Manage VRF Configuration on NDFC
+    # --------------------------------------------------------------------
+    - name: Manage NDFC Fabric VRFs
+      cisco.dcnm.dcnm_vrf:
+        fabric: "{{ fabric_settings.FABRIC_NAME }}"
+        config: "{{ vrf_config }}"
+        state: overridden
+
+# -----------------------
+# CREATE NETWORK SECTION
+# -----------------------
+
+- name: Generate and Manage NDFC Fabric Networks
+  tags:
+    - mo_vrfs_nets
+    - mo_vrfs
+    - mo_all
+  block:
+    # --------------------------------------------------------------------
+    # Generate Network Configuration for NDFC
+    # --------------------------------------------------------------------
+    - name: Create file to hold rendered Network information
+      ansible.builtin.template:
+        src: attach_networks.j2
+        dest: "{{ role_path }}/files/attach_nets.yml"
+        mode: preserve
+
+    - name: Create and store generated Network configuration
+      ansible.builtin.set_fact:
+        net_config: "{{ lookup('file', 'attach_nets.yml') | from_yaml }}"
+
+    # --------------------------------------------------------------------
+    # Manage Network Configuration on NDFC
+    # --------------------------------------------------------------------
+    - name: Manage NDFC Fabric Networks
+      cisco.dcnm.dcnm_network:
+        fabric: "{{ fabric_settings.FABRIC_NAME }}"
+        config: "{{ net_config }}"
+        state: overridden

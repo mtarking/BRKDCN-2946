@@ -1,6 +1,0 @@
----
-
-- name: Create vPC interfaces on leaf1 and leaf2
-  cisco.dcnm.dcnm_interface:
-    fabric: "{{ fabric.name }}"
-    config: "{{ interface.vpc }}"
