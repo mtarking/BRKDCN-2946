@@ -5,8 +5,10 @@ features:
   - pim
   - bgp
   - nv overlay
-  - netconf
-  - restconf
+  # - netconf
+  # - restconf
+
+ntp_server: 10.81.254.131
 
 bgp_asn: 65001
 

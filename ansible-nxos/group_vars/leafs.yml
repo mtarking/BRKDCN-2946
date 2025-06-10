@@ -8,8 +8,10 @@ features:
   - nv overlay
   - vn-segment-vlan-based
   - interface-vlan
-  - netconf
-  - restconf
+  # - netconf
+  # - restconf
+
+ntp_server: 10.81.254.131
 
 bgp_asn: 65001
 

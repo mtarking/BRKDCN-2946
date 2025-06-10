@@ -1,7 +1,7 @@
 ---
-# vars file for S1
+# vars file for spine1
 
-hostname: S1
+hostname: spine1
 
 layer3_physical_interfaces: &l3
     - interface: ethernet1/1

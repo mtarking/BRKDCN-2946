@@ -1,4 +1,4 @@
-all:
+nxos:
   vars:
     ansible_connection: ansible.netcommon.network_cli
     ansible_user: admin
@@ -7,10 +7,15 @@ all:
   children:
     spines:
       hosts:
-        10.15.33.11:
-        10.15.33.12:
+        spine1:
+          ansible_host: 10.15.34.11
+        spine2:
+          ansible_host: 10.15.34.12
     leafs:
       hosts:
-        10.15.33.13:
-        10.15.33.14:
-        10.15.33.15:
+        leaf1:
+          ansible_host: 10.15.34.13
+        leaf2:
+          ansible_host: 10.15.34.14
+        leaf3:
+          ansible_host: 10.15.34.15

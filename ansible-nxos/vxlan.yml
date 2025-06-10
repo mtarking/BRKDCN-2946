@@ -6,18 +6,18 @@
 
   roles:
     - role: common
-    - role: underlay
+    # - role: underlay
 
-- hosts: leafs
-  gather_facts: false
+# - hosts: leafs
+#   gather_facts: false
 
-  roles:
-    - role: overlay
+#   roles:
+#     - role: overlay
 
-- hosts: all
-  gather_facts: false
+# - hosts: all
+#   gather_facts: false
 
-  tasks:
-    - name: Save Running-Config to Startup-Config
-      cisco.nxos.nxos_config:
-        save_when: always
+#   tasks:
+#     - name: Save Running-Config to Startup-Config
+#       cisco.nxos.nxos_config:
+#         save_when: always

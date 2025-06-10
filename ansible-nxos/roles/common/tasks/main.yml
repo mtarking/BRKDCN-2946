@@ -1,23 +1,54 @@
 ---
 # tasks file for roles/common
 
-- name: Configure Hostname
-  cisco.nxos.nxos_hostname:
-    config:
-      hostname: "{{ hostname }}"
-    state: merged
+# - name: Configure Hostname
+#   cisco.nxos.nxos_hostname:
+#     config:
+#       hostname: "{{ hostname }}"
+#     state: overridden
 
-- name: Configure NTP Server
-  cisco.nxos.nxos_ntp_global:
-    config:
-      servers:
-        - server: "{{ ntp_server }}"
-          use_vrf: management
-          prefer: true
-    state: merged
+# - name: Configure NTP Server
+#   cisco.nxos.nxos_ntp_global:
+#     config:
+#       servers:
+#         - server: "{{ ntp_server }}"
+#           use_vrf: management
+#           prefer: true
+#     state: overridden
 
 - name: Enable Features
   cisco.nxos.nxos_feature:
     feature: "{{ item }}"
     state: enabled
   loop: "{{ features }}"
+
+- name: Get Features via TextFSM
+  ansible.utils.cli_parse:
+    command: show run | include feature
+    parser:
+      name: ansible.utils.textfsm
+      template_path: "{{ role_path }}/templates/feature.textfsm"
+    set_fact: parsed_output
+
+- ansible.builtin.set_fact:
+    parsed_features: "{{ parsed_output | map(attribute='feature') | list | unique }}"
+
+# - ansible.builtin.debug:
+#     var: parsed_features
+
+# - ansible.builtin.debug:
+#     var: features
+
+- ansible.builtin.set_fact:
+    features_to_unconfigure: "{{ parsed_features | difference(features) }}"
+
+# - ansible.builtin.debug:
+#     var: features_to_unconfigure
+
+- name: Enable Features
+  cisco.nxos.nxos_feature:
+    feature: "{{ item }}"
+    state: disabled
+  loop: "{{ features_to_unconfigure }}"
+
+

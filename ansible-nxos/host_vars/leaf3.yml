@@ -1,7 +1,7 @@
 ---
-# vars file for L3
+# vars file for leaf3
 
-hostname: L3
+hostname: leaf3
 
 layer3_physical_interfaces: &l3
   - interface: ethernet1/1
