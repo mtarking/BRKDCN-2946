@@ -1,0 +1,7 @@
+{% if loopback_interfaces is defined and loopback_interfaces is iterable %}
+{% for interface in loopback_interfaces %}
+- name: "{{ interface.name }}"
+  ipv4:
+    - address: "{{ interface.ip_address }}/{{ interface.mask }}"
+{% endfor %}
+{% endif %}

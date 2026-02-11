@@ -1,0 +1,14 @@
+{% if all_layer3_interfaces is defined and all_layer3_interfaces is iterable %}
+{% for interface in all_layer3_interfaces %}
+{% if interface.ospf is defined %}
+- name: "{{ interface.name }}"
+  address_family:
+    - afi: ipv4
+      network: point-to-point
+      processes:
+        - process_id: "{{ interface.ospf.process }}"
+          area:
+            area_id: "{{ interface.ospf.area }}"
+{% endif %}
+{% endfor %}
+{% endif %}

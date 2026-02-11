@@ -1,8 +1,0 @@
-{% for vrf in vrfs %}
-- name: vlan{{ vrf.vlan_id }}
-  enabled: true
-{% endfor %}
-{% for network in networks %}
-- name: vlan{{ network.vlan_id }}
-  enabled: true
-{% endfor %}

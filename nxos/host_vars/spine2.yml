@@ -4,36 +4,59 @@
 hostname: spine2
 
 layer3_physical_interfaces: &l3
-    - interface: mgmt0
-      ip_address: 10.15.34.12
+    - name: mgmt0
+      ip_address: 10.15.33.12
       mask: 24
-      mtu: 1500
-    - interface: ethernet1/1
-      description: To L1 Eth1/12
+      enabled: true
+    - name: Ethernet1/1
+      description: To L1 Eth1/2
       ip_address: 10.2.2.0
       mask: 31
       mtu: 9216
-    - interface: ethernet1/2
-      description: To L2 Eth1/12
+      enabled: true
+      ospf:
+        process: UNDERLAY
+        area: 0.0.0.0
+      pim: true
+    - name: Ethernet1/2
+      description: To L2 Eth1/2
       ip_address: 10.2.2.2
       mask: 31
       mtu: 9216
-    - interface: ethernet1/3
-      description: To L3 Eth1/12
+      enabled: true
+      ospf:
+        process: UNDERLAY
+        area: 0.0.0.0
+      pim: true
+    - name: Ethernet1/3
+      description: To L3 Eth1/2
       ip_address: 10.2.2.4
       mask: 31
       mtu: 9216
+      enabled: true
+      ospf:
+        process: UNDERLAY
+        area: 0.0.0.0
+      pim: true
 
 loopback_interfaces: &lo
-    - interface: loopback0 
+    - name: loopback0
       description: Routing Loopback
       ip_address: 10.0.0.2
       mask: 32
-    - interface: loopback250
+      enabled: true
+      ospf:
+        process: UNDERLAY
+        area: 0.0.0.0
+      pim: true
+    - name: loopback250
       description: PIM Anycast RP Loopback
-      ip_address: 10.10.10.250
+      ip_address: 10.250.250.1
       mask: 32
+      enabled: true
+      ospf:
+        process: UNDERLAY
+        area: 0.0.0.0
+      pim: true
 
-all_layer3_interfaces:
-    - *l3
-    - *lo
+all_layer3_interfaces: "{{ layer3_physical_interfaces + loopback_interfaces }}"

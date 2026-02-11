@@ -1,0 +1,7 @@
+---
+
+ntp:
+  servers:
+    - ip: 10.81.254.131
+      vrf: managemenet
+      prefer: true

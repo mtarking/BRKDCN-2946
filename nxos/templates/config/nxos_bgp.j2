@@ -1,0 +1,21 @@
+{% if bgp is defined %}
+{% set rtr_id = loopback_interfaces | selectattr('name', 'match', '(?i)loopback0') | first %}
+as_number: "{{ bgp.asn }}"
+router_id: "{{ rtr_id.ip_address }}"
+{% if bgp.neighbors is defined and bgp.neighbors is iterable %}
+neighbors:
+{% for neighbor in bgp.neighbors %}
+  - neighbor_address: "{{ neighbor.neighbor }}"
+    remote_as: "{{ neighbor.remote_as }}"
+    update_source: "{{ neighbor.update_source }}"
+{% endfor %}
+{% endif %}
+{% if vrfs is defined and vrfs is iterable %}
+{% for vrf in vrfs %}
+{% if vrf.name not in ['management'] %}
+vrfs:
+  - vrf: {{ vrf.name }}
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endif %}

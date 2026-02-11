@@ -1,0 +1,19 @@
+{% if vrfs is defined and vrfs is iterable %}
+vrfs:
+{% for vrf in vrfs %}
+  - name: "{{ vrf.name }}"
+{% if vrf.routes is defined and vrf.routes is iterable %}
+    ip:
+      route:
+{% for route in vrf.routes %}
+        - destination: "{{ route.next_hop }}"
+          source: "{{ route.destination }}"
+{% endfor %}
+{% endif %}
+{% if vrf.name != 'management' %}
+    rd: auto
+    vni:
+      vni_number: "{{ vrf.vni_id }}"
+{% endif %}
+{% endfor %}
+{% endif %}

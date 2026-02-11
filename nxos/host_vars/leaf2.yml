@@ -4,47 +4,60 @@
 hostname: leaf2
 
 layer3_physical_interfaces: &l3
-  - interface: mgmt0
-    ip_address: 10.15.34.14
+  - name: mgmt0
+    ip_address: 10.15.33.14
     mask: 24
-    mtu: 1500
-  - interface: ethernet1/1
-    description: To S1 Eth1/2
+    enabled: true
+  - name: nve1
+    enabled: true
+  - name: Ethernet1/1
+    description: To S1 Eth1/1
     mode: layer3
     ip_address: 10.1.1.3
     mask: 31
     mtu: 9216
-  - interface: ethernet1/2
-    description: To S2 Eth1/2
+    enabled: true
+    ospf:
+      process: UNDERLAY
+      area: 0.0.0.0
+    pim: true
+  - name: Ethernet1/2
+    description: To S2 Eth1/1
     mode: layer3
     ip_address: 10.2.2.3
     mask: 31
     mtu: 9216
-
-layer2_physical_interfaces: &l2
-    - interface: ethernet1/11
-      description: To Server1
-      mtu: 9216
-    - interface: ethernet1/12
-      description: To Server2
-      mtu: 9216
-    - interface: ethernet1/18
-      description: To L1 Eth1/8
-      mtu: 9216
-    - interface: ethernet1/19
-      description: To L1 Eth1/9
-      mtu: 9216
+    enabled: true
+    ospf:
+      process: UNDERLAY
+      area: 0.0.0.0
+    pim: true
 
 loopback_interfaces: &lo
-  - interface: loopback0
+  - name: loopback0
     description: Routing Loopback
     ip_address: 10.0.0.102
     mask: 32
-  - interface: loopback1
+    enabled: true
+    ospf:
+      process: UNDERLAY
+      area: 0.0.0.0
+    pim: true
+  - name: loopback1
     description: VTEP Loopback
     ip_address: 10.100.100.102
     mask: 32
+    enabled: true
+    ospf:
+      process: UNDERLAY
+      area: 0.0.0.0
+    pim: true
 
-all_layer3_interfaces:
-    - *l3
-    - *lo
+all_layer3_interfaces: "{{ layer3_physical_interfaces + loopback_interfaces }}"
+
+layer2_physical_interfaces: &l2
+  - name: Ethernet1/4
+    description: To Server1 Eth1
+    mode: access
+    vlan: 101
+    enabled: true

@@ -1,4 +1,4 @@
-ansible==9.13.0
+ansible-core==2.18.12
 paramiko
 textfsm
 jmespath

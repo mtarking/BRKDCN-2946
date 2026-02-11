@@ -1,0 +1,36 @@
+{# Build list of VLAN IDs that should exist from YAML data #}
+{% set defined_interfaces = [] %}
+{% for interface in all_layer3_interfaces %}
+    {% set iname = interface.name %}
+    {% if iname.startswith('loopback') or iname.startswith('nve') %}
+        {% set _ = defined_interfaces.append(iname) %}
+    {% endif %}
+{% endfor %}
+
+{% if networks is defined and networks is iterable %}
+{% for network in networks %}
+  {% if network.vlan_id is defined %}
+    {% set _ = defined_interfaces.append('Vlan' ~ network.vlan_id) %}
+  {% endif %}
+{% endfor %}
+{% endif %}
+
+{% if vrfs is defined and vrfs is iterable %}
+{% for vrf in vrfs %}
+  {% if vrf.vlan_id is defined %}
+    {% set _ = defined_interfaces.append('Vlan' ~ vrf.vlan_id) %}
+  {% endif %}
+{% endfor %}
+{% endif %}
+
+{# Build interfaces list in nxos_interfaces format #}
+{% set interfaces_to_remove = [] %}
+{% for interface in current_nxos_interfaces.gathered %}
+  {% set iname = interface.name %}
+  {% if (iname.startswith('loopback') or iname.startswith('Vlan') or iname.startswith('nve')) and iname != 'Vlan1' %}
+    {% if iname not in defined_interfaces %}
+      {% set _ = interfaces_to_remove.append({'name': iname}) %}
+    {% endif %}
+  {% endif %}
+{% endfor %}
+{{ interfaces_to_remove }}

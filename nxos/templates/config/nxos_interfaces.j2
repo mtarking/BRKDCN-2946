@@ -1,0 +1,21 @@
+{% if all_layer3_interfaces is defined and all_layer3_interfaces is iterable %}
+{% for interface in all_layer3_interfaces %}
+- name: {{ interface.name }}
+  description: {{ interface.description | default(omit) }}
+  mode: {{ 'layer3' if 'ethernet' in interface.name | lower else omit }}
+  mtu: {{ interface.mtu if 'ethernet' in interface.name | lower else omit }}
+  enabled: {{ interface.enabled | default(true) | lower }}
+{% endfor %}
+{% endif %}
+{% if (vrfs is defined and vrfs is iterable) or
+      (networks is defined and networks is iterable) %}
+{% set vlans = vrfs + networks %}
+{% for vlan in vlans %}
+{% if vlan.vlan_id is defined or vlan.name != 'management' %}
+- name: Vlan{{ vlan.vlan_id }}
+  ip_forward: {{ true | lower if vlan.ip_address is not defined else omit }}
+  fabric_forwarding_anycast_gateway: {{ true | lower if vlan.ip_address is defined else omit }}
+  enabled: true
+{% endif%}
+{% endfor %}
+{% endif %}

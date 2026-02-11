@@ -1,0 +1,12 @@
+{% if vrfs is defined and vrfs is iterable %}
+as_number: "{{ bgp.asn }}"
+address_family:
+{% for vrf in vrfs %}
+{% if vrf.name != 'management' %}
+  - vrf: {{ vrf.name }}
+    afi: ipv4
+    safi: unicast
+    advertise_l2vpn_evpn: true
+{% endif %}
+{% endfor %}
+{% endif %}

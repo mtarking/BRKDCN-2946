@@ -1,177 +1,124 @@
+#SPDX-License-Identifier: MIT-0
 ---
-# tasks file for roles/underlay
+# tasks file for underlay
 
-- name: Generate Interface Attributes Config Payload
+- name: Generate L3 Interface(s) Payload
   ansible.builtin.set_fact:
-    nxos_interfaces: "{{ lookup('template', 'nxos_interfaces.j2') }}"
+    nxos_interfaces: "{{ lookup('ansible.builtin.template', playbook_dir ~ '/templates/config/nxos_interfaces.j2') }}"
 
-- name: Configure Interface Attributes
+- name: Configure L3 Interface(s)
   cisco.nxos.nxos_interfaces:
-    config: "{{ nxos_interfaces | from_yaml }}"
-    state: replaced
+    config: "{{ nxos_interfaces | ansible.builtin.from_yaml }}"
+    state: overridden
 
-- name: Generate Interface L3 Config Payload
+- name: Generate L3 Interface(s) IPv4 Payload
   ansible.builtin.set_fact:
-    nxos_l3_interfaces: "{{ lookup('template', 'nxos_l3_interfaces.j2') }}"
+    nxos_l3_interfaces: "{{ lookup('ansible.builtin.template', playbook_dir ~ '/templates/config/nxos_l3_interfaces.j2') }}"
 
-- name: Configure L3 Interface Attributes
+- name: Configure IP Address on L3 Interfaces
   cisco.nxos.nxos_l3_interfaces:
-    config: "{{ nxos_l3_interfaces | from_yaml }}"
+    config: "{{ nxos_l3_interfaces | ansible.builtin.from_yaml }}"
     state: replaced
 
-- name: Configure Underlay OSPF Process
+- name: Generate Loopback Interface(s) IPv4 Payload
+  ansible.builtin.set_fact:
+    nxos_loopback_interfaces_ipv4: "{{ lookup('ansible.builtin.template', playbook_dir ~ '/templates/config/nxos_loopback_interfaces_ipv4.j2') }}"
+
+- name: Configure IP Address on Loopback Interfaces
+  cisco.nxos.nxos_l3_interfaces:
+    config: "{{ nxos_loopback_interfaces_ipv4 | ansible.builtin.from_yaml }}"
+    state: merged
+
+- name: Get Interface(s)
+  cisco.nxos.nxos_interfaces:
+    state: gathered
+  register: current_nxos_interfaces
+
+- name: Generate L3 Interface(s) to Remove Payload
+  ansible.builtin.set_fact:
+    nxos_interfaces_to_remove: "{{ lookup('ansible.builtin.template', playbook_dir ~ '/templates/config/nxos_interfaces_to_remove.j2') }}"
+
+- name: Remove L3 Interface(s)
+  cisco.nxos.nxos_interfaces:
+    config: "{{ nxos_interfaces_to_remove | ansible.builtin.from_yaml }}"
+    state: purged
+  when: nxos_interfaces_to_remove | ansible.builtin.from_yaml | length > 0
+
+- name: Generate OSPF Underlay Process Payload
+  ansible.builtin.set_fact:
+    nxos_ospf: "{{ lookup('ansible.builtin.template', playbook_dir ~ '/templates/config/nxos_ospf.j2') }}"
+
+- name: Configure OSPF Underlay Process
   cisco.nxos.nxos_ospfv2:
-    config:
-      processes:
-      - process_id: "{{ ospf_process_id }}"
-        router_id: "{{ loopback_interfaces[0].ip_address }}"
+    config: "{{ nxos_ospf | ansible.builtin.from_yaml }}"
     state: overridden
 
-- name: Generate OSPF Interface Config Payload
+- name: Generate OSPF Interface(s) Payload
   ansible.builtin.set_fact:
-    nxos_ospf_interfaces: "{{ lookup('template', 'nxos_ospf_interfaces.j2') }}"
+    nxos_ospf_interfaces: "{{ lookup('ansible.builtin.template', playbook_dir ~ '/templates/config/nxos_ospf_interfaces.j2') }}"
 
-- name: Configure Interface Association to OSPF Process
+- name: Configure OSPF Interface(s)
   cisco.nxos.nxos_ospf_interfaces:
-    config: "{{ nxos_ospf_interfaces | from_yaml }}"
+    config: "{{ nxos_ospf_interfaces | ansible.builtin.from_yaml }}"
     state: overridden
 
-- name: Manage PIM Anycast RPs
+- name: Configure PIM Anycast RP on Spines
+  cisco.nxos.nxos_config:
+    lines: |
+      {% for rtr_rp_addr in hostvars[groups['spines'] | first].pim.anycast_rp_router_addresses %}
+      ip pim anycast-rp {{ hostvars[groups['spines'] | first].pim.anycast_rp_address }} {{ rtr_rp_addr }}
+      {% endfor %}
   when: inventory_hostname in groups['spines']
-  block:
-    - name: Configure PIM Anycast RP
-      cisco.nxos.nxos_config:
-        lines:
-          - "ip pim anycast-rp {{ hostvars[groups['spines'][0]].loopback_interfaces[1].ip_address }} {{ hostvars[groups['spines'][0]].loopback_interfaces[0].ip_address }}"
-          - "ip pim anycast-rp {{ hostvars[groups['spines'][1]].loopback_interfaces[1].ip_address }} {{ hostvars[groups['spines'][1]].loopback_interfaces[0].ip_address }}"
-        save_when: modified
 
-    - name: Get PIM Anycast RPs from Switch via Native JSON
-      ansible.utils.cli_parse:
-        command: show ip pim rp | json
-        parser:
-          name: ansible.utils.json
-        set_fact: parsed_output
+- name: Configure PIM RP Address
+  cisco.nxos.nxos_pim_rp_address:
+    rp_address: "{{ hostvars[groups['spines'] | first].pim.anycast_rp_address }}"
+    state: present
 
-    - name: Default Parsed PIM Anycast RPs List
-      ansible.builtin.set_fact:
-        parsed_pim_anycast_rps: []
+- name: Configure PIM Interface(s)
+  cisco.nxos.nxos_pim_interface:
+    interface: "{{ item.name }}"
+    sparse: true
+    state: present
+  when: item.pim is defined and item.pim
+  loop: "{{ all_layer3_interfaces }}"
 
-    - name: Parse PIM Interfaces
-      ansible.builtin.set_fact:
-        parsed_pim_anycast_rps: "{{ parsed_output | community.general.json_query(query1) | default([]) }}"
-        parsed_pim_rp_address: "{{ parsed_output | community.general.json_query(query2) | default('') }}"
-      vars:
-        query1: 'TABLE_vrf.ROW_vrf.TABLE_anycast_rp.ROW_anycast_rp.TABLE_arp_rp.ROW_arp_rp[*]."arp-rp-addr"'
-        query2: 'TABLE_vrf.ROW_vrf.TABLE_anycast_rp.ROW_anycast_rp."anycast-rp-addr"'
+- name: Get PIM Interfaces
+  ansible.utils.cli_parse:
+    command: show ip pim interface brief | json
+    parser:
+      name: ansible.utils.json
+    set_fact: parsed_output
 
-    - name: Unconfigure PIM Anycast RP(s)
-      cisco.nxos.nxos_config:
-        lines:
-          - "no ip pim anycast-rp {{ parsed_pim_rp_address }} {{ item }}"
-        save_when: modified
-      loop: "{{ parsed_pim_anycast_rps }}"
-      when: >
-        - (parsed_pim_anycast_rps | length > 0) and 
-          (parsed_pim_rp_address not in [hostvars[groups['spines'][0]].loopback_interfaces[1].ip_address, hostvars[groups['spines'][1]].loopback_interfaces[1].ip_address]) or
-          (item not in [hostvars[groups['spines'][0]].loopback_interfaces[0].ip_address, hostvars[groups['spines'][1]].loopback_interfaces[0].ip_address])
-
-- name: Manage PIM Interface Associations
-  block:
-    - name: Configure Interface Association to PIM Process
-      cisco.nxos.nxos_pim_interface:
-        interface: "{{ item.interface }}"
-        sparse: true
-        state: present
-      loop: "{{ all_layer3_interfaces | flatten(1) }}"
-      when: item.interface != "mgmt0"
-
-    - name: Get PIM Interfaces from Switch via Native JSON
-      ansible.utils.cli_parse:
-        command: show ip pim interface brief | json
-        parser:
-          name: ansible.utils.json
-        set_fact: parsed_output
-
-    - name: Default Parsed PIM Interfaces List
-      ansible.builtin.set_fact:
-        parsed_pim_interfaces: []
-
-    - name: Parse PIM Interfaces
-      ansible.builtin.set_fact:
-        parsed_pim_interfaces: "{{ parsed_output | community.general.json_query(query) | map('lower') | default([]) }}"
-      vars:
-        query: 'TABLE_vrf.ROW_vrf.TABLE_brief.ROW_brief[*]."if-name"'
-
-    - name: Default PIM Interfaces to Unconfigure List
-      ansible.builtin.set_fact:
-        pim_interfaces_to_unconfigure: []
-
-    - name: Get All L3 Interfaces
-      ansible.builtin.set_fact:
-        all_layer3_interfaces: "{{ all_layer3_interfaces | flatten(1) | map(attribute='interface') | list | unique | default([]) }}"
-
-    - name: Determine Features to Unconfigure
-      ansible.builtin.set_fact:
-        pim_interfaces_to_unconfigure: "{{ parsed_pim_interfaces | difference(all_layer3_interfaces) | default([]) }}"
-
-    - name: Remove PIM Interfaces
-      cisco.nxos.nxos_pim_interface:
-        interface: "{{ item }}"
-        state: absent
-      loop: "{{ pim_interfaces_to_unconfigure }}"
-      when:
-        - item != "mgmt0"
-        - pim_interfaces_to_unconfigure | length > 0
-
-- name: Manage PIM RP Address
-  block:
-    - name: Configure PIM RP Address
-      cisco.nxos.nxos_pim_rp_address:
-        rp_address: "{{ hostvars[groups['spines'][0]].loopback_interfaces[1].ip_address }}"
-        state: present
-
-    - name: Get PIM RP Address from Switch via Native JSON
-      ansible.utils.cli_parse:
-        command: show ip pim rp | json
-        parser:
-          name: ansible.utils.json
-        set_fact: parsed_output
-
-    - name: Default Parsed PIM RP List
-      ansible.builtin.set_fact:
-        parsed_pim_rp_address: ""
-
-    - name: Parse PIM RP Addresses
-      ansible.builtin.set_fact:
-        parsed_pim_rp_address: "{{ parsed_output | community.general.json_query(query) | default([]) }}"
-      vars:
-        query: 'TABLE_vrf.ROW_vrf.TABLE_rp.ROW_rp."rp-addr"'
-
-    - name: Remove PIM RP Addresses
-      cisco.nxos.nxos_pim_rp_address:
-        rp_address: "{{ parsed_pim_rp_address }}"
-        state: absent
-      when: parsed_pim_rp_address != hostvars[groups['spines'][0]].loopback_interfaces[1].ip_address
-
-- name: Enable NV Overlay EVPN
-  cisco.nxos.nxos_evpn_global:
-    nv_overlay_evpn: true
-
-- name: Generate BGP Global & Neighbor Config Payload
+- name: Parse PIM Interfaces
   ansible.builtin.set_fact:
-    nxos_bgp_global: "{{ lookup('template', 'nxos_bgp_global.j2') }}"
+    parsed_pim_interfaces: "{{ parsed_output.TABLE_vrf.ROW_vrf.TABLE_brief.ROW_brief | map(attribute='if-name') | list | unique | default([]) }}"
+
+- name: Determine PIM Interfaces to Unconfigure
+  ansible.builtin.set_fact:
+    pim_interfaces_to_unconfigure: "{{ parsed_pim_interfaces | difference(all_layer3_interfaces | selectattr('pim', 'defined') | selectattr('pim', 'equalto', true) | map(attribute='name') | list) }}"
+
+- name: Remove PIM Interface(s)
+  cisco.nxos.nxos_pim_interface:
+    interface: "{{ item }}"
+    state: absent
+  when: pim_interfaces_to_unconfigure | length > 0
+  loop: "{{ pim_interfaces_to_unconfigure }}"
+
+- name: Generate BGP Process and Neighbor Payload
+  ansible.builtin.set_fact:
+    nxos_bgp: "{{ lookup('ansible.builtin.template', playbook_dir ~ '/templates/config/nxos_bgp.j2') }}"
 
 - name: Configure BGP Process and Neighbors
   cisco.nxos.nxos_bgp_global:
-    config: "{{ nxos_bgp_global | from_yaml }}"
+    config: "{{ nxos_bgp | ansible.builtin.from_yaml }}"
     state: overridden
 
-- name: Generate BGP Neighbor AF Config Payload
+- name: Generate BGP Neighbor Address-Family(ies) Payload
   ansible.builtin.set_fact:
-    nxos_bgp_nbr_af: "{{ lookup('template', 'nxos_bgp_nbr_af.j2') }}"
+    nxos_bgp_af: "{{ lookup('ansible.builtin.template', playbook_dir ~ '/templates/config/nxos_bgp_af.j2') }}"
 
 - name: Configure BGP Neighbor Address-Families
   cisco.nxos.nxos_bgp_neighbor_address_family:
-    config: "{{ nxos_bgp_nbr_af | from_yaml }}"
+    config: "{{ nxos_bgp_af | ansible.builtin.from_yaml }}"
     state: overridden

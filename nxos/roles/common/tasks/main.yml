@@ -1,5 +1,6 @@
+#SPDX-License-Identifier: MIT-0
 ---
-# tasks file for roles/common
+# tasks file for common
 
 - name: Configure Hostname
   cisco.nxos.nxos_hostname:
@@ -7,43 +8,37 @@
       hostname: "{{ hostname }}"
     state: overridden
 
+- name: Generate NTP Config Payload
+  ansible.builtin.set_fact:
+    nxos_ntp_config: "{{ lookup('ansible.builtin.template', playbook_dir ~ '/templates/config/nxos_ntp_global.j2') }}"
+
 - name: Configure NTP Server
   cisco.nxos.nxos_ntp_global:
-    config:
-      servers:
-        - server: "{{ ntp_server }}"
-          use_vrf: management
-          prefer: true
+    config: "{{ nxos_ntp_config | from_yaml }}"
     state: overridden
 
 - name: Manage Features
   when: features is defined and features | length > 0
   block:
-    - name: Enable Features
-      cisco.nxos.nxos_feature:
-        feature: "{{ item }}"
-        state: enabled
-      loop: "{{ features }}"
-
     - name: Get Features from Switch via TextFSM
       ansible.utils.cli_parse:
         command: show run | include feature
         parser:
           name: ansible.utils.textfsm
-          template_path: "{{ role_path }}/templates/feature.textfsm"
+          template_path: "{{ playbook_dir }}/templates/parse/feature.textfsm"
         set_fact: parsed_output
 
-    - name: Default Parsed Feaures List
-      ansible.builtin.set_fact:
-        parsed_features: []
+    # - name: Default Parsed Feaures List
+    #   ansible.builtin.set_fact:
+    #     parsed_features: []
 
     - name: Parse Features
       ansible.builtin.set_fact:
         parsed_features: "{{ parsed_output | map(attribute='feature') | list | unique | default([]) }}"
 
-    - name: Default Feature to Unconfigure List
-      ansible.builtin.set_fact:
-        features_to_unconfigure: []
+    # - name: Default Feature to Unconfigure List
+    #   ansible.builtin.set_fact:
+    #     features_to_unconfigure: []
 
     - name: Determine Features to Unconfigure
       ansible.builtin.set_fact:
@@ -55,3 +50,13 @@
         state: disabled
       loop: "{{ features_to_unconfigure }}"
       when: features_to_unconfigure | length > 0
+
+    - name: Enable Features
+      cisco.nxos.nxos_feature:
+        feature: "{{ item }}"
+        state: enabled
+      loop: "{{ features }}"
+
+- name: Enable NV Overlay EVPN
+  cisco.nxos.nxos_evpn_global:
+    nv_overlay_evpn: true

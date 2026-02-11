@@ -14,7 +14,7 @@
   roles:
     - role: overlay
 
-- hosts: all
+- hosts: nxos
   gather_facts: false
 
   tasks:

@@ -1,0 +1,10 @@
+{% if ntp is defined %}
+{% if ntp.servers is defined and ntp.servers is iterable %}
+servers:
+{% for server in ntp.servers %}
+    - server: {{ server.ip }}
+      use_vrf: {{ server.vrf }}
+      prefer: {{ server.prefer }}
+{% endfor %}
+{% endif %}
+{% endif %}

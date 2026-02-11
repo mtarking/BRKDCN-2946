@@ -1,4 +1,0 @@
-Value feature ((?<=\bfeature\s).+)
-
-Start
-  ^feature\s+${feature} -> Record Start

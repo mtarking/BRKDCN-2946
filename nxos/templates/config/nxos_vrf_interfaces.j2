@@ -1,0 +1,15 @@
+{% if (vrfs is defined and vrfs is iterable) or
+      (networks is defined and networks is iterable) %}
+{% for vrf in vrfs %}
+{% if vrf.name != 'management' %}
+- name: Vlan{{ vrf.vlan_id }}
+  vrf_name: {{ vrf.name }}
+{% endif%}
+{% endfor %}
+{% for network in networks %}
+{% if network.vlan_id != 1 %}
+- name: Vlan{{ network.vlan_id }}
+  vrf_name: {{ network.vrf }}
+{% endif%}
+{% endfor %}
+{% endif %}

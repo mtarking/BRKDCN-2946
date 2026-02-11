@@ -1,21 +1,29 @@
 nxos:
   vars:
     ansible_connection: ansible.netcommon.network_cli
-    ansible_user: admin
-    ansible_password: cisco.123
+    ansible_user: "{{ lookup('ansible.builtin.env', 'NXOS_USERNAME') }}"
+    ansible_password: "{{ lookup('ansible.builtin.env', 'NXOS_PASSWORD') }}"
     ansible_network_os: cisco.nxos.nxos
+    # Settings for httpapi plugin if using NX-API
+    # ansible_connection: ansible.netcommon.httpapi
+    # ansible_httpapi_port: 443
+    # ansible_httpapi_use_ssl: yes
+    # ansible_httpapi_validate_certs: no
+    # ansible_user: admin
+    # ansible_httpapi_pass: cisco.123
+    # ansible_network_os: cisco.nxos.nxos
   children:
     spines:
       hosts:
         spine1:
-          ansible_host: 10.15.34.11
+          ansible_host: 10.15.33.11
         spine2:
-          ansible_host: 10.15.34.12
+          ansible_host: 10.15.33.12
     leafs:
       hosts:
         leaf1:
-          ansible_host: 10.15.34.13
+          ansible_host: 10.15.33.13
         leaf2:
-          ansible_host: 10.15.34.14
-        leaf3:
-          ansible_host: 10.15.34.15
+          ansible_host: 10.15.33.14
+        # leaf3:
+        #   ansible_host: 10.15.33.15

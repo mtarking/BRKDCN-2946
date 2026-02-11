@@ -1,0 +1,16 @@
+{% if layer3_physical_interfaces is defined and layer3_physical_interfaces is iterable %}
+{% for interface in layer3_physical_interfaces %}
+{% if interface.name not in ['nve1'] %}
+- name: "{{ interface.name }}"
+  ipv4:
+    - address: "{{ interface.ip_address }}/{{ interface.mask }}"
+{% endif %}
+{% endfor %}
+{% endif %}
+{% if networks is defined and networks is iterable %}
+{% for network in networks %}
+- name: "Vlan{{ network.vlan_id }}"
+  ipv4:
+    - address: "{{ network.ip_address }}/{{ network.mask }}"
+{% endfor %}
+{% endif %}

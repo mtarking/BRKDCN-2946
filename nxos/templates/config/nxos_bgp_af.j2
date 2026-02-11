@@ -1,0 +1,23 @@
+{% if bgp is defined %}
+as_number: {{ bgp.asn }}
+{% if bgp.neighbors is defined and bgp.neighbors is iterable %}
+neighbors:
+{% for neighbor in bgp.neighbors %}
+  - neighbor_address: {{ neighbor.neighbor }}
+    address_family:
+      - afi: l2vpn
+        safi: evpn
+        route_reflector_client: {{ 'yes' if inventory_hostname in groups['spines'] else omit }}
+        send_community:
+          both: true
+{% endfor %}
+{% endif %}
+{% if vrfs is defined and vrfs is iterable %}
+{% for vrf in vrfs %}
+{% if vrf.name not in ['management'] %}
+vrfs:
+  - vrf: {{ vrf.name }}
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endif %}

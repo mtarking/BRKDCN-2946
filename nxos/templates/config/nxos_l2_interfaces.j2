@@ -1,0 +1,14 @@
+{% if layer2_physical_interfaces is defined and layer2_physical_interfaces is iterable %}
+{% for interface in layer2_physical_interfaces %}
+- name: {{ interface.name }}
+  mode: {{ interface.mode }}
+{% if interface.mode == 'access' %}
+  access:
+    vlan: {{ interface.vlan }}
+{% endif %}
+{% if interface.mode == 'trunk' %}
+  trunk:
+    allowed_vlans: {{ interface.allowed_vlans }}
+{% endif %}
+{% endfor %}
+{% endif %}

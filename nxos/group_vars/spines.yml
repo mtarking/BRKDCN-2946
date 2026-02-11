@@ -1,6 +1,8 @@
 ---
+# var file for spines group
 
 features:
+  - nxapi
   - ospf
   - pim
   - bgp
@@ -8,17 +10,24 @@ features:
   - netconf
   - restconf
 
-ntp_server: 10.81.254.131
+ospf:
+  - process: UNDERLAY
+    area: 0.0.0.0
 
-bgp_asn: 65001
+pim:
+  anycast_rp_address: 10.250.250.1
+  anycast_rp_router_addresses:
+    - 10.0.0.1
 
-bgp_neighbors:
-  - neighbor: 10.0.0.101
-    remote_as: 65001
-    update_source: Loopback0
-  - neighbor: 10.0.0.102
-    remote_as: 65001
-    update_source: Loopback0
-  - neighbor: 10.0.0.103
-    remote_as: 65001
-    update_source: Loopback0
+bgp:
+  asn: 65001
+  neighbors:
+    - neighbor: 10.0.0.101
+      remote_as: 65001
+      update_source: loopback0
+    - neighbor: 10.0.0.102
+      remote_as: 65001
+      update_source: loopback0
+    - neighbor: 10.0.0.103
+      remote_as: 65001
+      update_source: loopback0

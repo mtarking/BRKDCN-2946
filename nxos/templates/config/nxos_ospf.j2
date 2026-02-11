@@ -1,0 +1,8 @@
+{% if ospf is defined and ospf is iterable %}
+{% set rtr_id = loopback_interfaces | selectattr('name', 'match', '(?i)loopback0') | first %}
+processes:
+{% for process in ospf %}
+  - process_id: "{{ process.process }}"
+    router_id: "{{ rtr_id.ip_address }}"
+{% endfor %}
+{% endif %}

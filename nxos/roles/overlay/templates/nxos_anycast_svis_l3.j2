@@ -1,5 +1,0 @@
-{% for network in networks %}
-- name: "vlan{{ network.vlan_id }}"
-  ipv4:
-    - address: "{{ network.addr }}/{{ network.mask }}"
-{% endfor %}
