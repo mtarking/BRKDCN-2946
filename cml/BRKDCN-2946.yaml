@@ -1,0 +1,823 @@
+annotations:
+  - border_color: '#808080FF'
+    border_style: ''
+    color: '#FFFFFFFF'
+    line_end: null
+    line_start: null
+    thickness: 1
+    type: line
+    x1: -120.0
+    y1: 80.0
+    x2: -120.0
+    y2: 80.0
+    z_index: 0
+smart_annotations: []
+nodes:
+  - boot_disk_size: null
+    configuration:
+      - name: default
+        content: bridge1
+    cpu_limit: null
+    cpus: null
+    data_volume: null
+    hide_links: true
+    id: n0
+    image_definition: null
+    label: ext-conn-0
+    node_definition: external_connector
+    parameters: {}
+    ram: null
+    tags: []
+    x: 200
+    y: -440
+    interfaces:
+      - id: i0
+        label: port
+        mac_address: null
+        slot: 0
+        type: physical
+  - boot_disk_size: null
+    configuration: []
+    cpu_limit: null
+    cpus: null
+    data_volume: null
+    hide_links: true
+    id: n1
+    image_definition: null
+    label: unmanaged-switch-0
+    node_definition: unmanaged_switch
+    parameters: {}
+    ram: null
+    tags: []
+    x: 200
+    y: -360
+    interfaces:
+      - id: i0
+        label: port0
+        mac_address: null
+        slot: 0
+        type: physical
+      - id: i1
+        label: port1
+        mac_address: null
+        slot: 1
+        type: physical
+      - id: i2
+        label: port2
+        mac_address: null
+        slot: 2
+        type: physical
+      - id: i3
+        label: port3
+        mac_address: null
+        slot: 3
+        type: physical
+      - id: i4
+        label: port4
+        mac_address: null
+        slot: 4
+        type: physical
+      - id: i5
+        label: port5
+        mac_address: null
+        slot: 5
+        type: physical
+      - id: i6
+        label: port6
+        mac_address: null
+        slot: 6
+        type: physical
+      - id: i7
+        label: port7
+        mac_address: null
+        slot: 7
+        type: physical
+      - id: i8
+        label: port8
+        mac_address: null
+        slot: 8
+        type: physical
+      - id: i9
+        label: port9
+        mac_address: null
+        slot: 9
+        type: physical
+      - id: i10
+        label: port10
+        mac_address: null
+        slot: 10
+        type: physical
+      - id: i11
+        label: port11
+        mac_address: null
+        slot: 11
+        type: physical
+      - id: i12
+        label: port12
+        mac_address: null
+        slot: 12
+        type: physical
+      - id: i13
+        label: port13
+        mac_address: null
+        slot: 13
+        type: physical
+      - id: i14
+        label: port14
+        mac_address: null
+        slot: 14
+        type: physical
+      - id: i15
+        label: port15
+        mac_address: null
+        slot: 15
+        type: physical
+      - id: i16
+        label: port16
+        mac_address: null
+        slot: 16
+        type: physical
+      - id: i17
+        label: port17
+        mac_address: null
+        slot: 17
+        type: physical
+      - id: i18
+        label: port18
+        mac_address: null
+        slot: 18
+        type: physical
+      - id: i19
+        label: port19
+        mac_address: null
+        slot: 19
+        type: physical
+      - id: i20
+        label: port20
+        mac_address: null
+        slot: 20
+        type: physical
+      - id: i21
+        label: port21
+        mac_address: null
+        slot: 21
+        type: physical
+      - id: i22
+        label: port22
+        mac_address: null
+        slot: 22
+        type: physical
+      - id: i23
+        label: port23
+        mac_address: null
+        slot: 23
+        type: physical
+      - id: i24
+        label: port24
+        mac_address: null
+        slot: 24
+        type: physical
+      - id: i25
+        label: port25
+        mac_address: null
+        slot: 25
+        type: physical
+      - id: i26
+        label: port26
+        mac_address: null
+        slot: 26
+        type: physical
+      - id: i27
+        label: port27
+        mac_address: null
+        slot: 27
+        type: physical
+      - id: i28
+        label: port28
+        mac_address: null
+        slot: 28
+        type: physical
+      - id: i29
+        label: port29
+        mac_address: null
+        slot: 29
+        type: physical
+      - id: i30
+        label: port30
+        mac_address: null
+        slot: 30
+        type: physical
+      - id: i31
+        label: port31
+        mac_address: null
+        slot: 31
+        type: physical
+  - boot_disk_size: null
+    configuration:
+      - name: nxos_config.txt
+        content: |-
+          hostname inserthostname-here
+          # workaround for booting to loader> prompt
+          echo 'from cli import cli' > set_boot.py
+          echo 'import json' >> set_boot.py
+          echo 'import os' >> set_boot.py
+          echo 'import time' >> set_boot.py
+          echo 'bootimage = json.loads(cli("show version | json"))["kick_file_name"]' >> set_boot.py
+          echo 'set_boot = cli("conf t ; boot nxos {} ; no event manager applet BOOTCONFIG".format(bootimage))' >> set_boot.py
+          echo 'i = 0' >> set_boot.py
+          echo 'while i < 10:' >> set_boot.py
+          echo '    try:' >> set_boot.py
+          echo '        save_config = cli("copy running-config startup-config")' >> set_boot.py
+          echo '        break' >> set_boot.py
+          echo '    except Exception:' >> set_boot.py
+          echo '        i += 1' >> set_boot.py
+          echo '        time.sleep(1)' >> set_boot.py
+          echo 'os.remove("/bootflash/set_boot.py")' >> set_boot.py
+          event manager applet BOOTCONFIG
+           event syslog pattern "Configured from vty"
+           action 1.0 cli python bootflash:set_boot.py
+          # minimum needed config to login
+          no password strength-check
+          username admin role network-admin
+          username admin password cisco.123 role network-admin
+          username cisco role network-admin
+          username cisco password cisco role network-admin
+          vrf context management
+            ip route 0.0.0.0/0 10.15.33.1
+          interface mgmt0
+            no cdp enable
+            vrf member management
+            ip address 10.15.33.11/24
+    cpu_limit: null
+    cpus: null
+    data_volume: null
+    hide_links: false
+    id: n2
+    image_definition: nxosv9500v64-lite-10-6-1-f
+    label: spine1
+    node_definition: nxosv9000
+    parameters: {}
+    ram: 8192
+    tags: []
+    x: -120
+    y: -240
+    interfaces:
+      - id: i0
+        label: Loopback0
+        mac_address: null
+        type: loopback
+      - id: i1
+        label: mgmt0
+        mac_address: null
+        slot: 0
+        type: physical
+      - id: i2
+        label: Ethernet1/1
+        mac_address: null
+        slot: 1
+        type: physical
+      - id: i3
+        label: Ethernet1/2
+        mac_address: null
+        slot: 2
+        type: physical
+      - id: i4
+        label: Ethernet1/3
+        mac_address: null
+        slot: 3
+        type: physical
+  - boot_disk_size: null
+    configuration:
+      - name: nxos_config.txt
+        content: |-
+          hostname inserthostname-here
+          # workaround for booting to loader> prompt
+          echo 'from cli import cli' > set_boot.py
+          echo 'import json' >> set_boot.py
+          echo 'import os' >> set_boot.py
+          echo 'import time' >> set_boot.py
+          echo 'bootimage = json.loads(cli("show version | json"))["kick_file_name"]' >> set_boot.py
+          echo 'set_boot = cli("conf t ; boot nxos {} ; no event manager applet BOOTCONFIG".format(bootimage))' >> set_boot.py
+          echo 'i = 0' >> set_boot.py
+          echo 'while i < 10:' >> set_boot.py
+          echo '    try:' >> set_boot.py
+          echo '        save_config = cli("copy running-config startup-config")' >> set_boot.py
+          echo '        break' >> set_boot.py
+          echo '    except Exception:' >> set_boot.py
+          echo '        i += 1' >> set_boot.py
+          echo '        time.sleep(1)' >> set_boot.py
+          echo 'os.remove("/bootflash/set_boot.py")' >> set_boot.py
+          event manager applet BOOTCONFIG
+           event syslog pattern "Configured from vty"
+           action 1.0 cli python bootflash:set_boot.py
+          # minimum needed config to login
+          no password strength-check
+          username admin role network-admin
+          username admin password cisco.123 role network-admin
+          username cisco role network-admin
+          username cisco password cisco role network-admin
+          vrf context management
+            ip route 0.0.0.0/0 10.15.33.1
+          interface mgmt0
+            no cdp enable
+            vrf member management
+            ip address 10.15.33.12/24
+    cpu_limit: null
+    cpus: null
+    data_volume: null
+    hide_links: false
+    id: n3
+    image_definition: nxosv9500v64-lite-10-6-1-f
+    label: spine2
+    node_definition: nxosv9000
+    parameters: {}
+    ram: 8192
+    tags: []
+    x: 40
+    y: -240
+    interfaces:
+      - id: i0
+        label: Loopback0
+        mac_address: null
+        type: loopback
+      - id: i1
+        label: mgmt0
+        mac_address: null
+        slot: 0
+        type: physical
+      - id: i2
+        label: Ethernet1/1
+        mac_address: null
+        slot: 1
+        type: physical
+      - id: i3
+        label: Ethernet1/2
+        mac_address: null
+        slot: 2
+        type: physical
+      - id: i4
+        label: Ethernet1/3
+        mac_address: null
+        slot: 3
+        type: physical
+  - boot_disk_size: null
+    configuration:
+      - name: nxos_config.txt
+        content: |-
+          hostname inserthostname-here
+          # workaround for booting to loader> prompt
+          echo 'from cli import cli' > set_boot.py
+          echo 'import json' >> set_boot.py
+          echo 'import os' >> set_boot.py
+          echo 'import time' >> set_boot.py
+          echo 'bootimage = json.loads(cli("show version | json"))["kick_file_name"]' >> set_boot.py
+          echo 'set_boot = cli("conf t ; boot nxos {} ; no event manager applet BOOTCONFIG".format(bootimage))' >> set_boot.py
+          echo 'i = 0' >> set_boot.py
+          echo 'while i < 10:' >> set_boot.py
+          echo '    try:' >> set_boot.py
+          echo '        save_config = cli("copy running-config startup-config")' >> set_boot.py
+          echo '        break' >> set_boot.py
+          echo '    except Exception:' >> set_boot.py
+          echo '        i += 1' >> set_boot.py
+          echo '        time.sleep(1)' >> set_boot.py
+          echo 'os.remove("/bootflash/set_boot.py")' >> set_boot.py
+          event manager applet BOOTCONFIG
+           event syslog pattern "Configured from vty"
+           action 1.0 cli python bootflash:set_boot.py
+          # minimum needed config to login
+          no password strength-check
+          username admin role network-admin
+          username admin password cisco.123 role network-admin
+          username cisco role network-admin
+          username cisco password cisco role network-admin
+          vrf context management
+            ip route 0.0.0.0/0 10.15.33.1
+          interface mgmt0
+            no cdp enable
+            vrf member management
+            ip address 10.15.33.13/24
+    cpu_limit: null
+    cpus: null
+    data_volume: null
+    hide_links: false
+    id: n4
+    image_definition: nxosv9300v64-lite-10-6-1-f
+    label: leaf1
+    node_definition: nxosv9000
+    parameters: {}
+    ram: 8192
+    tags: []
+    x: -200
+    y: -80
+    interfaces:
+      - id: i0
+        label: Loopback0
+        mac_address: null
+        type: loopback
+      - id: i1
+        label: mgmt0
+        mac_address: null
+        slot: 0
+        type: physical
+      - id: i2
+        label: Ethernet1/1
+        mac_address: null
+        slot: 1
+        type: physical
+      - id: i3
+        label: Ethernet1/2
+        mac_address: null
+        slot: 2
+        type: physical
+      - id: i4
+        label: Ethernet1/3
+        mac_address: null
+        slot: 3
+        type: physical
+  - boot_disk_size: null
+    configuration:
+      - name: nxos_config.txt
+        content: |-
+          hostname inserthostname-here
+          # workaround for booting to loader> prompt
+          echo 'from cli import cli' > set_boot.py
+          echo 'import json' >> set_boot.py
+          echo 'import os' >> set_boot.py
+          echo 'import time' >> set_boot.py
+          echo 'bootimage = json.loads(cli("show version | json"))["kick_file_name"]' >> set_boot.py
+          echo 'set_boot = cli("conf t ; boot nxos {} ; no event manager applet BOOTCONFIG".format(bootimage))' >> set_boot.py
+          echo 'i = 0' >> set_boot.py
+          echo 'while i < 10:' >> set_boot.py
+          echo '    try:' >> set_boot.py
+          echo '        save_config = cli("copy running-config startup-config")' >> set_boot.py
+          echo '        break' >> set_boot.py
+          echo '    except Exception:' >> set_boot.py
+          echo '        i += 1' >> set_boot.py
+          echo '        time.sleep(1)' >> set_boot.py
+          echo 'os.remove("/bootflash/set_boot.py")' >> set_boot.py
+          event manager applet BOOTCONFIG
+           event syslog pattern "Configured from vty"
+           action 1.0 cli python bootflash:set_boot.py
+          # minimum needed config to login
+          no password strength-check
+          username admin role network-admin
+          username admin password cisco.123 role network-admin
+          username cisco role network-admin
+          username cisco password cisco role network-admin
+          vrf context management
+            ip route 0.0.0.0/0 10.15.33.1
+          interface mgmt0
+            no cdp enable
+            vrf member management
+            ip address 10.15.33.14/24
+    cpu_limit: null
+    cpus: null
+    data_volume: null
+    hide_links: false
+    id: n5
+    image_definition: nxosv9300v64-lite-10-6-1-f
+    label: leaf2
+    node_definition: nxosv9000
+    parameters: {}
+    ram: 8192
+    tags: []
+    x: -40
+    y: -80
+    interfaces:
+      - id: i0
+        label: Loopback0
+        mac_address: null
+        type: loopback
+      - id: i1
+        label: mgmt0
+        mac_address: null
+        slot: 0
+        type: physical
+      - id: i2
+        label: Ethernet1/1
+        mac_address: null
+        slot: 1
+        type: physical
+      - id: i3
+        label: Ethernet1/2
+        mac_address: null
+        slot: 2
+        type: physical
+      - id: i4
+        label: Ethernet1/3
+        mac_address: null
+        slot: 3
+        type: physical
+  - boot_disk_size: null
+    configuration:
+      - name: nxos_config.txt
+        content: |-
+          hostname inserthostname-here
+          # workaround for booting to loader> prompt
+          echo 'from cli import cli' > set_boot.py
+          echo 'import json' >> set_boot.py
+          echo 'import os' >> set_boot.py
+          echo 'import time' >> set_boot.py
+          echo 'bootimage = json.loads(cli("show version | json"))["kick_file_name"]' >> set_boot.py
+          echo 'set_boot = cli("conf t ; boot nxos {} ; no event manager applet BOOTCONFIG".format(bootimage))' >> set_boot.py
+          echo 'i = 0' >> set_boot.py
+          echo 'while i < 10:' >> set_boot.py
+          echo '    try:' >> set_boot.py
+          echo '        save_config = cli("copy running-config startup-config")' >> set_boot.py
+          echo '        break' >> set_boot.py
+          echo '    except Exception:' >> set_boot.py
+          echo '        i += 1' >> set_boot.py
+          echo '        time.sleep(1)' >> set_boot.py
+          echo 'os.remove("/bootflash/set_boot.py")' >> set_boot.py
+          event manager applet BOOTCONFIG
+           event syslog pattern "Configured from vty"
+           action 1.0 cli python bootflash:set_boot.py
+          # minimum needed config to login
+          no password strength-check
+          username admin role network-admin
+          username admin password cisco.123 role network-admin
+          username cisco role network-admin
+          username cisco password cisco role network-admin
+          vrf context management
+            ip route 0.0.0.0/0 10.15.33.1
+          interface mgmt0
+            no cdp enable
+            vrf member management
+            ip address 10.15.33.15/24
+    cpu_limit: null
+    cpus: null
+    data_volume: null
+    hide_links: false
+    id: n6
+    image_definition: nxosv9300v64-lite-10-6-1-f
+    label: leaf3
+    node_definition: nxosv9000
+    parameters: {}
+    ram: 8192
+    tags: []
+    x: 120
+    y: -80
+    interfaces:
+      - id: i0
+        label: Loopback0
+        mac_address: null
+        type: loopback
+      - id: i1
+        label: mgmt0
+        mac_address: null
+        slot: 0
+        type: physical
+      - id: i2
+        label: Ethernet1/1
+        mac_address: null
+        slot: 1
+        type: physical
+      - id: i3
+        label: Ethernet1/2
+        mac_address: null
+        slot: 2
+        type: physical
+      - id: i4
+        label: Ethernet1/3
+        mac_address: null
+        slot: 3
+        type: physical
+  - boot_disk_size: null
+    configuration:
+      - name: node.cfg
+        content: |-
+          # this is a shell script which will be sourced at boot
+          hostname server1
+          # configurable user account
+          USERNAME=cisco
+          PASSWORD=cisco.123
+
+          cat << 'EOF' > /etc/network/interfaces
+          auto eth0
+          iface eth0 inet static
+              address 10.15.33.101
+              netmask 255.255.255.0
+              gateway 10.15.33.1
+              dns-nameservers 10.0.249.16
+              mtu 1500
+              post-up ethtool -s eth0 speed 1000 duplex full autoneg off
+
+          auto eth1
+          iface eth1 inet static
+              address 192.168.11.101
+              netmask 255.255.255.0
+              gateway 192.168.1.1
+              mtu 1500
+              post-up ethtool -s eth1 speed 1000 duplex full autoneg off
+
+          EOF
+
+          sudo rc-service networking restart
+
+          ip route add 192.168.0.0/16 via 192.168.1.1
+          ip route add 172.16.0.0/16 via 192.168.1.1
+    cpu_limit: null
+    cpus: null
+    data_volume: null
+    hide_links: false
+    id: n7
+    image_definition: null
+    label: server1
+    node_definition: alpine
+    parameters: {}
+    ram: null
+    tags: []
+    x: -200
+    y: 80
+    interfaces:
+      - id: i0
+        label: eth0
+        mac_address: null
+        slot: 0
+        type: physical
+      - id: i1
+        label: eth1
+        mac_address: null
+        slot: 1
+        type: physical
+      - id: i2
+        label: eth2
+        mac_address: null
+        slot: 2
+        type: physical
+  - boot_disk_size: null
+    configuration:
+      - name: node.cfg
+        content: |-
+          # this is a shell script which will be sourced at boot
+          hostname server2
+          # configurable user account
+          USERNAME=cisco
+          PASSWORD=cisco.123
+
+          cat << 'EOF' > /etc/network/interfaces
+          auto eth0
+          iface eth0 inet static
+              address 10.15.33.102
+              netmask 255.255.255.0
+              gateway 10.15.33.1
+              dns-nameservers 10.0.249.16
+              mtu 1500
+              post-up ethtool -s eth0 speed 1000 duplex full autoneg off
+
+          auto eth1
+          iface eth1 inet static
+              address 192.168.2.101
+              netmask 255.255.255.0
+              gateway 192.168.2.1
+              mtu 1500
+              post-up ethtool -s eth1 speed 1000 duplex full autoneg off
+
+          EOF
+
+          sudo rc-service networking restart
+
+          ip route add 192.168.0.0/16 via 192.168.2.1
+          ip route add 172.16.0.0/16 via 192.168.2.1
+    cpu_limit: null
+    cpus: null
+    data_volume: null
+    hide_links: false
+    id: n8
+    image_definition: null
+    label: server2
+    node_definition: alpine
+    parameters: {}
+    ram: null
+    tags: []
+    x: 120
+    y: 80
+    interfaces:
+      - id: i0
+        label: eth0
+        mac_address: null
+        slot: 0
+        type: physical
+      - id: i1
+        label: eth1
+        mac_address: null
+        slot: 1
+        type: physical
+links:
+  - id: l0
+    n1: n1
+    n2: n0
+    i1: i0
+    i2: i0
+    conditioning: {}
+    label: unmanaged-switch-0-port0<->ext-conn-0-port
+  - id: l1
+    n1: n2
+    n2: n1
+    i1: i1
+    i2: i1
+    conditioning: {}
+    label: spine1-mgmt0<->unmanaged-switch-0-port1
+  - id: l2
+    n1: n3
+    n2: n1
+    i1: i1
+    i2: i2
+    conditioning: {}
+    label: spine2-mgmt0<->unmanaged-switch-0-port2
+  - id: l3
+    n1: n4
+    n2: n1
+    i1: i1
+    i2: i3
+    conditioning: {}
+    label: leaf1-mgmt0<->unmanaged-switch-0-port3
+  - id: l4
+    n1: n5
+    n2: n1
+    i1: i1
+    i2: i4
+    conditioning: {}
+    label: leaf2-mgmt0<->unmanaged-switch-0-port4
+  - id: l5
+    n1: n6
+    n2: n1
+    i1: i1
+    i2: i5
+    conditioning: {}
+    label: leaf3-mgmt0<->unmanaged-switch-0-port5
+  - id: l6
+    n1: n4
+    n2: n2
+    i1: i2
+    i2: i2
+    conditioning: {}
+    label: leaf1-Ethernet1/1<->spine1-Ethernet1/1
+  - id: l7
+    n1: n2
+    n2: n5
+    i1: i3
+    i2: i2
+    conditioning: {}
+    label: spine1-Ethernet1/2<->leaf2-Ethernet1/1
+  - id: l8
+    n1: n2
+    n2: n6
+    i1: i4
+    i2: i2
+    conditioning: {}
+    label: spine1-Ethernet1/3<->leaf3-Ethernet1/1
+  - id: l9
+    n1: n3
+    n2: n4
+    i1: i2
+    i2: i3
+    conditioning: {}
+    label: spine2-Ethernet1/1<->leaf1-Ethernet1/2
+  - id: l10
+    n1: n3
+    n2: n5
+    i1: i3
+    i2: i3
+    conditioning: {}
+    label: spine2-Ethernet1/2<->leaf2-Ethernet1/2
+  - id: l11
+    n1: n3
+    n2: n6
+    i1: i4
+    i2: i3
+    conditioning: {}
+    label: spine2-Ethernet1/3<->leaf3-Ethernet1/2
+  - id: l12
+    n1: n7
+    n2: n1
+    i1: i0
+    i2: i11
+    conditioning: {}
+    label: server1-eth0<->unmanaged-switch-0-port11
+  - id: l13
+    n1: n8
+    n2: n1
+    i1: i0
+    i2: i12
+    conditioning: {}
+    label: server2-eth0<->unmanaged-switch-0-port12
+  - id: l14
+    n1: n7
+    n2: n4
+    i1: i1
+    i2: i4
+    conditioning: {}
+    label: server1-eth1<->leaf1-Ethernet1/3
+  - id: l15
+    n1: n8
+    n2: n6
+    i1: i1
+    i2: i4
+    conditioning: {}
+    label: server2-eth1<->leaf3-Ethernet1/3
+lab:
+  description: ''
+  notes: ''
+  title: BRKDCN-2946
+  version: 0.3.0
