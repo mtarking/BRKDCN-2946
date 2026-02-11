@@ -56,7 +56,7 @@ loopback_interfaces: &lo
 all_layer3_interfaces: "{{ layer3_physical_interfaces + loopback_interfaces }}"
 
 layer2_physical_interfaces: &l2
-  - name: Ethernet1/4
+  - name: Ethernet1/3
     description: To Server1 Eth1
     mode: access
     vlan: 101
