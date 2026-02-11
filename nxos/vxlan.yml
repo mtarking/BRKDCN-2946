@@ -1,20 +1,23 @@
 ---
 # main playbook
 
-- hosts: spines, leafs
+- name: Manage Common and Underlay Configurations
+  hosts: spines, leafs
   gather_facts: false
 
   roles:
     - role: common
     - role: underlay
 
-- hosts: leafs
+- name: Manage Overlay Configurations
+  hosts: leafs
   gather_facts: false
 
   roles:
     - role: overlay
 
-- hosts: nxos
+- name: Save Running-Config to Startup-Config
+  hosts: nxos
   gather_facts: false
 
   tasks:
